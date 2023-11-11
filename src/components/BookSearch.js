@@ -1,14 +1,37 @@
+import { useState } from 'react'
 import { searchBooks } from '../services/apiService'
-import { addBook } from '../services/bookService'
+// import { addBook } from '../services/bookService'
 
 const BookSearch = () => {
+  const [query, setQuery] = useState('')
+  const [queriedBooks, setQueriedBooks] = useState([])
+
+  const handleSearch = () => {
+    searchBooks(query, setQueriedBooks)
+  }
+
   return (
     <div>
-      <h2>Search Books</h2>
       {/* Get the query from user input */}
       {/* Search through the volumes according to user input when button is pushed */}
       {/* Display books that match user input query */}
       {/* Allow user to add books to log and display in UI when one is added */}
+
+      <h2>Search Books</h2>
+      <input type="text" value={query} onChange={e => setQuery(e.target.value)} />
+      <button onClick={handleSearch}>Search</button>
+      <ul>
+        {queriedBooks.map(book => (
+          <li key={book.id}>
+            {book.volumeInfo.title}
+            {book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.smallThumbnail && (
+              <img src={book.volumeInfo.imageLinks.smallThumbnail} alt={`${book.volumeInfo.title} Cover`} />
+            )}
+            {!book.volumeInfo.imageLinks && <span>No image available</span>}
+            {/* <button onClick={() => handleAddToRead(book)}>Add to Read</button> */}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

@@ -7,7 +7,7 @@ function App() {
   return (
     <div>
       <BookSearch />
-      <BookLog />
+      {/* <BookLog /> */}
     </div>
   )
 }
