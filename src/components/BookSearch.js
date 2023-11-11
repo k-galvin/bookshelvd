@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { searchBooks } from '../services/apiService'
 // import { addBook } from '../services/bookService'
 
@@ -6,9 +6,20 @@ const BookSearch = () => {
   const [query, setQuery] = useState('')
   const [queriedBooks, setQueriedBooks] = useState([])
 
-  const handleSearch = () => {
-    searchBooks(query, setQueriedBooks)
-  }
+  useEffect(() => {
+    // Function to handle the book search
+    const handleSearch = () => {
+      if (query.trim() !== '') {
+        searchBooks(query, setQueriedBooks)
+      } else {
+        // If the query is empty, set the queried books to an empty array
+        setQueriedBooks([])
+      }
+    }
+
+    // Call handleSearch on initial render to fetch books without delay
+    handleSearch()
+  }, [query])
 
   return (
     <div>
@@ -19,7 +30,7 @@ const BookSearch = () => {
 
       <h2>Search Books</h2>
       <input type="text" value={query} onChange={e => setQuery(e.target.value)} />
-      <button onClick={handleSearch}>Search</button>
+      {/* <button onClick={handleSearch}>Search</button> */}
       <ul>
         {queriedBooks.map(book => (
           <li key={book.id}>
