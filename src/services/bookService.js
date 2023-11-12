@@ -25,12 +25,13 @@ export async function logBook(userId, volumeId, title) {
   return { userId, bookId: loggedBookRef.id, ...bookData }
 }
 
-// // Fetch books from firebase
-// export async function fetchAllBooks() {
-//   // Fetch all the books in the user's read books log
-//   const snapshot = await getDocs(query(collection(db, 'loggedBooks')))
-//   return snapshot.docs.map(doc => ({
-//     id: doc.id,
-//     ...doc.data()
-//   }))
-// }
+// Fetch logged books from firebase
+export async function fetchLoggedBooks(userId) {
+  // Fetch all the books in the user's read books log
+  const userRef = doc(db, 'users', userId)
+  const snapshot = await getDocs(collection(userRef, 'loggedBooks'))
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }))
+}

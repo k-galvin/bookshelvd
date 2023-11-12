@@ -12,7 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<div>Home</div>} />
         <Route path="/book-search" element={<BookSearchPage user={user} />} />
-        {/* <Route path="/book-log" element={() => <BookLogPage user={user} />} /> */}
+        <Route path="/book-log" element={<BookLogPage user={user} />} />
       </Routes>
     </Router>
   )
