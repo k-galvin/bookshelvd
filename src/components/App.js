@@ -1,17 +1,20 @@
 import './App.css'
-import { SignIn, SignOut, useAuthentication } from '../services/authService'
-import BookSearch from './BookSearch'
-import BookLog from './BookLog'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { useAuthentication } from '../services/authService'
+import BookSearchPage from './BookSearchPage'
+import BookLogPage from './BookLogPage'
 
 function App() {
   const user = useAuthentication()
 
   return (
-    <div>
-      <BookSearch user={user} />
-      {/* <BookLog /> */}
-      {!user ? <SignIn /> : <SignOut />}
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<div>Home</div>} />
+        <Route path="/book-search" element={<BookSearchPage user={user} />} />
+        {/* <Route path="/book-log" element={() => <BookLogPage user={user} />} /> */}
+      </Routes>
+    </Router>
   )
 }
 

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { searchBooks } from '../services/apiService'
 import { logBook } from '../services/bookService'
+import { SignIn, SignOut } from '../services/authService'
 
-export default function BookSearch({ user }) {
+export default function BookSearchPage({ user }) {
   const [query, setQuery] = useState('')
   const [queriedBooks, setQueriedBooks] = useState([])
 
@@ -56,6 +57,7 @@ export default function BookSearch({ user }) {
       ) : (
         'No results'
       )}
+      {!user ? <SignIn /> : <SignOut />}
     </div>
   )
 }
