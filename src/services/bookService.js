@@ -4,10 +4,14 @@ import { db } from '../firebaseConfig'
 import { collection, query, getDocs, addDoc, doc, where } from 'firebase/firestore'
 
 // Add a read book to the firestore
-export async function logBook(userId, volumeId, title) {
-  const bookData = {
+export async function logBook(userId, volumeId, title, thumbnail) {
+  let bookData = {
     title: title,
     id: volumeId
+  }
+
+  if (thumbnail) {
+    bookData.thumbnail = thumbnail
   }
 
   const userRef = doc(db, 'users', userId)

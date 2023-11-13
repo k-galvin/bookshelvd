@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { fetchLoggedBooks } from '../services/bookService'
-import { SignIn, SignOut } from '../services/authService'
 
 export default function BookLogPage({ user }) {
   const [loggedBooks, setLoggedBooks] = useState([])
@@ -20,14 +19,16 @@ export default function BookLogPage({ user }) {
       {loggedBooks ? (
         <ul>
           {loggedBooks.map(book => (
-            <li key={book.id}>{book.title}</li>
+            <li key={book.id}>
+              {book.title}
+              {book.thumbnail && <img src={book.thumbnail} alt={`${book.title} Cover`} />}
+              {!book.thumbnail && <span>No image available</span>}
+            </li>
           ))}
         </ul>
       ) : (
         'No Logged Books'
       )}
-
-      {!user ? <SignIn /> : <SignOut />}
     </div>
   )
 }

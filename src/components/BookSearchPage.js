@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { searchBooks } from '../services/apiService'
 import { logBook } from '../services/bookService'
-import { SignIn, SignOut } from '../services/authService'
 
 export default function BookSearchPage({ user }) {
   const [query, setQuery] = useState('')
@@ -24,7 +23,11 @@ export default function BookSearchPage({ user }) {
 
   // Handling function for logging a new book
   const handleLogBook = (user, book) => {
-    logBook(user.uid, book.id, book.volumeInfo.title)
+    if (book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.smallThumbnail) {
+      logBook(user.uid, book.id, book.volumeInfo.title, book.volumeInfo.imageLinks.smallThumbnail)
+    } else {
+      logBook(user.uid, book.id, book.volumeInfo.title, null)
+    }
   }
 
   return (
@@ -57,7 +60,6 @@ export default function BookSearchPage({ user }) {
       ) : (
         'No results'
       )}
-      {!user ? <SignIn /> : <SignOut />}
     </div>
   )
 }
