@@ -23,11 +23,7 @@ export default function BookSearchPage({ user }) {
 
   // Handling function for logging a new book
   const handleLogBook = (user, book) => {
-    if (book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.smallThumbnail) {
-      logBook(user.uid, book.id, book.volumeInfo.title, book.volumeInfo.imageLinks.smallThumbnail)
-    } else {
-      logBook(user.uid, book.id, book.volumeInfo.title, null)
-    }
+    logBook(user, book)
   }
 
   return (

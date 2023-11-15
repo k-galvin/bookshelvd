@@ -4,21 +4,26 @@ import { db } from '../firebaseConfig'
 import { collection, query, getDocs, addDoc, doc, where } from 'firebase/firestore'
 
 // Add a read book to the firestore
-export async function logBook(userId, volumeId, title, thumbnail) {
-  let bookData = {
-    title: title,
-    id: volumeId
-  }
+export async function logBook(user, book) {
+  const userId = user.uid
 
-  if (thumbnail) {
-    bookData.thumbnail = thumbnail
+  let bookData = {
+    title: book.volumeInfo.title,
+    id: book.id,
+    thumbnail: book.volumeInfo.imageLinks.thumbnail,
+    authors: book.volumeInfo.authors,
+    publishedDate: book.volumeInfo.publishedDate,
+    description: book.volumeInfo.description,
+    pageCount: book.volumeInfo.pageCount,
+    averageRating: book.volumeInfo.averageRating,
+    categories: book.volumeInfo.categories
   }
 
   const userRef = doc(db, 'users', userId)
   const loggedBooksCollectionRef = collection(userRef, 'loggedBooks')
 
   // Check if book has already been logged
-  const existingBookQuery = query(loggedBooksCollectionRef, where('id', '==', volumeId))
+  const existingBookQuery = query(loggedBooksCollectionRef, where('id', '==', book.id))
   const existingBookSnapshot = await getDocs(existingBookQuery)
 
   // If book has already been logged, won't log it again
