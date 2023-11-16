@@ -11,7 +11,8 @@ export async function logBook(user, book) {
   let bookData = {
     title: book.volumeInfo.title,
     volumeId: book.id,
-    thumbnail: book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null,
+    thumbnail:
+      book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : '',
     authors: book.volumeInfo.authors ? book.volumeInfo.authors : '',
     publishedDate: book.volumeInfo.publishedDate ? book.volumeInfo.publishedDate : '',
     description: book.volumeInfo.description ? book.volumeInfo.description : '',
@@ -23,17 +24,22 @@ export async function logBook(user, book) {
   const userRef = doc(db, 'users', userId)
   const loggedBooksCollectionRef = collection(userRef, 'loggedBooks')
 
-  // Check if book has already been logged
-  const existingBookQuery = query(loggedBooksCollectionRef, where('volumeId', '==', book.id))
-  const existingBookSnapshot = await getDocs(existingBookQuery)
+  try {
+    // Check if book has already been logged
+    const existingBookQuery = query(loggedBooksCollectionRef, where('volumeId', '==', book.id))
+    const existingBookSnapshot = await getDocs(existingBookQuery)
 
-  // If book has already been logged, won't log it again
-  if (!existingBookSnapshot.empty) {
-    return
+    // If book has already been logged, won't log it again
+    if (!existingBookSnapshot.empty) {
+      return
+    }
+
+    const loggedBookRef = await addDoc(loggedBooksCollectionRef, bookData)
+    return { userId, bookId: loggedBookRef.id, ...bookData }
+  } catch (error) {
+    console.error('Error logging book:', error)
+    throw error
   }
-
-  const loggedBookRef = await addDoc(loggedBooksCollectionRef, bookData)
-  return { userId, bookId: loggedBookRef.id, ...bookData }
 }
 
 // Remove logged book from firebase

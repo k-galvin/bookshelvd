@@ -8,12 +8,18 @@ export default function BookLogPage({ user, deleteBook, loggedBooks }) {
         <ul>
           {loggedBooks.map(book => (
             <li key={book.id}>
-              {book.title}
-              {book.thumbnail && <img src={book.thumbnail} alt={`${book.title} Cover`} />}
-              {!book.thumbnail && <span>No image available</span>}
+              <div className="book-container">
+                {book.thumbnail ? (
+                  <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
+                ) : (
+                  <div className="alt-cover">{book.title}</div>
+                )}
 
-              {/* Button to remove a book from log */}
-              <button onClick={() => deleteBook(user, book)}>Remove from Read</button>
+                {/* Button to remove a book from log */}
+                <button onClick={() => deleteBook(user, book)} className="remove-button">
+                  Remove
+                </button>
+              </div>
             </li>
           ))}
         </ul>

@@ -18,7 +18,7 @@ function App() {
     if (user) {
       fetchLoggedBooks(user.uid).then(setLoggedBooks)
     }
-  }, [user, loggedBooks])
+  }, [user])
 
   // Handling function for deleting a book from firestore
   const deleteBook = async (user, book) => {
