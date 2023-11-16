@@ -5,12 +5,12 @@ import { getFirestore } from 'firebase/firestore'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyBw7ypyzXk6NecYwQOXWuEcEk7pxaMfpEw',
-  authDomain: 'shelved-b3133.firebaseapp.com',
-  projectId: 'shelved-b3133',
-  storageBucket: 'shelved-b3133.appspot.com',
-  messagingSenderId: '941669756338',
-  appId: '1:941669756338:web:570b066d214a7e27fb48ab'
+  apiKey: "AIzaSyBORIEalmm7wDneI5KtoCs4h2oEQSLpIEs",
+  authDomain: "bookshelved-c5988.firebaseapp.com",
+  projectId: "bookshelved-c5988",
+  storageBucket: "bookshelved-c5988.appspot.com",
+  messagingSenderId: "484269649149",
+  appId: "1:484269649149:web:c8733df0a811c3dc9be294"
 }
 
 // Initialize Firebase
