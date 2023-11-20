@@ -1,7 +1,7 @@
 // This service completely hides the data store from the rest of the app.
 
 import { db } from '../firebaseConfig'
-import { collection, query, getDocs, addDoc, doc, where, deleteDoc } from 'firebase/firestore'
+import { collection, query, getDocs, addDoc, doc, where, deleteDoc, Timestamp } from 'firebase/firestore'
 
 // Add a read book to the firestore
 export async function logBook(user, book) {
@@ -18,7 +18,8 @@ export async function logBook(user, book) {
     description: book.volumeInfo.description ? book.volumeInfo.description : '',
     pageCount: book.volumeInfo.pageCount ? book.volumeInfo.pageCount : '',
     averageRating: book.volumeInfo.averageRating ? book.volumeInfo.averageRating : '',
-    categories: book.volumeInfo.categories ? book.volumeInfo.categories : ''
+    categories: book.volumeInfo.categories ? book.volumeInfo.categories : '',
+    dateLogged: Timestamp.now()
   }
 
   const userRef = doc(db, 'users', userId)

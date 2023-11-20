@@ -18,12 +18,13 @@ function App() {
     if (user) {
       fetchLoggedBooks(user.uid).then(setLoggedBooks)
     }
-  }, [user])
+  }, [user, loggedBooks.length])
 
   // Handling function for deleting a book from firestore
   const deleteBook = async (user, book) => {
     try {
       await removeLoggedBook(user, book.id)
+      setLoggedBooks(prevBooks => prevBooks.filter(prevBook => prevBook.id !== book.id))
     } catch (error) {
       console.error('Error removing book:', error)
     }
@@ -33,6 +34,7 @@ function App() {
   const addBook = async (user, book) => {
     try {
       await logBook(user, book)
+      setLoggedBooks(prevBooks => [...prevBooks, book])
     } catch (error) {
       console.error('Error adding book:', error)
     }
