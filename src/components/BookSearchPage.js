@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { searchBooks } from '../services/apiService'
+import Book from './Book'
 
-export default function BookSearchPage({ user, addBook }) {
+export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks }) {
   const [query, setQuery] = useState('')
   const [queriedBooks, setQueriedBooks] = useState([])
 
@@ -30,14 +31,19 @@ export default function BookSearchPage({ user, addBook }) {
         <ul>
           {queriedBooks.map(book => (
             <li key={book.id}>
-              {book.volumeInfo.title}
-              {book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.smallThumbnail && (
-                <img src={book.volumeInfo.imageLinks.smallThumbnail} alt={`${book.volumeInfo.title} Cover`} />
-              )}
-              {!book.volumeInfo.imageLinks && <span>No image available</span>}
-
-              {/* Button to log a book */}
-              <button onClick={() => addBook(user, book)}>Add to Read</button>
+              <Book
+                book={book}
+                cover={
+                  book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.smallThumbnail
+                    ? book.volumeInfo.imageLinks.smallThumbnail
+                    : null
+                }
+                loggedBooks={loggedBooks}
+                addBook={addBook}
+                deleteBook={deleteBook}
+                user={user}
+                title={book.volumeInfo.title}
+              />
             </li>
           ))}
         </ul>

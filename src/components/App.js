@@ -46,10 +46,13 @@ function App() {
 
       <Routes>
         <Route path="/" element={<div>Home</div>} />
-        <Route path="/book-search" element={<BookSearchPage user={user} addBook={addBook} />} />
+        <Route
+          path="/book-search"
+          element={<BookSearchPage user={user} addBook={addBook} deleteBook={deleteBook} loggedBooks={loggedBooks} />}
+        />
         <Route
           path="/book-log"
-          element={<BookLogPage user={user} deleteBook={deleteBook} loggedBooks={loggedBooks} />}
+          element={<BookLogPage user={user} addBook={addBook} deleteBook={deleteBook} loggedBooks={loggedBooks} />}
         />
       </Routes>
     </Router>

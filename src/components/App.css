@@ -6,6 +6,7 @@
 .book-container {
   width: 80px;
   height: 140px;
+  position: relative;
 }
 
 .cover-img {
@@ -13,9 +14,30 @@
   height: 120px;
 }
 
-.remove-button {
+.overlay-icon {
   font-size: 10px;
   height: 20px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.overlay-icon.red {
+  background-color: red;
+}
+
+.overlay-icon.green {
+  background-color: green;
+}
+
+.book-container:hover .overlay-icon {
+  opacity: 1;
 }
 
 .alt-cover {

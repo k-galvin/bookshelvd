@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import Book from './Book'
 
-export default function BookLogPage({ user, deleteBook, loggedBooks }) {
+export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) {
   const [sortOption, setSortOption] = useState('newestToOldest')
 
   // Function to compare two books based on the selected sorting option
@@ -66,51 +67,42 @@ export default function BookLogPage({ user, deleteBook, loggedBooks }) {
           {sortOption.includes('Rating')
             ? ratedBooks.map(book => (
                 <li key={book.id}>
-                  <div className="book-container">
-                    {book.thumbnail ? (
-                      <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
-                    ) : (
-                      <div className="alt-cover">{book.title}</div>
-                    )}
-
-                    {/* Button to remove a book from log */}
-                    <button onClick={() => deleteBook(user, book)} className="remove-button">
-                      Remove
-                    </button>
-                  </div>
+                  <Book
+                    book={book}
+                    cover={book.thumbnail}
+                    loggedBooks={loggedBooks}
+                    addBook={addBook}
+                    deleteBook={deleteBook}
+                    user={user}
+                    title={book.title}
+                  />
                 </li>
               ))
             : sortOption.includes('Length')
             ? pageCountBooks.map(book => (
                 <li key={book.id}>
-                  <div className="book-container">
-                    {book.thumbnail ? (
-                      <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
-                    ) : (
-                      <div className="alt-cover">{book.title}</div>
-                    )}
-
-                    {/* Button to remove a book from log */}
-                    <button onClick={() => deleteBook(user, book)} className="remove-button">
-                      Remove
-                    </button>
-                  </div>
+                  <Book
+                    book={book}
+                    cover={book.thumbnail}
+                    loggedBooks={loggedBooks}
+                    addBook={addBook}
+                    deleteBook={deleteBook}
+                    user={user}
+                    title={book.title}
+                  />
                 </li>
               ))
             : sortedBooks.map(book => (
                 <li key={book.id}>
-                  <div className="book-container">
-                    {book.thumbnail ? (
-                      <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
-                    ) : (
-                      <div className="alt-cover">{book.title}</div>
-                    )}
-
-                    {/* Button to remove a book from log */}
-                    <button onClick={() => deleteBook(user, book)} className="remove-button">
-                      Remove
-                    </button>
-                  </div>
+                  <Book
+                    book={book}
+                    cover={book.thumbnail}
+                    loggedBooks={loggedBooks}
+                    addBook={addBook}
+                    deleteBook={deleteBook}
+                    user={user}
+                    title={book.title}
+                  />
                 </li>
               ))}
         </ul>
@@ -125,18 +117,15 @@ export default function BookLogPage({ user, deleteBook, loggedBooks }) {
           <ul>
             {unratedBooks.map(book => (
               <li key={book.id}>
-                <div className="book-container">
-                  {book.thumbnail ? (
-                    <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
-                  ) : (
-                    <div className="alt-cover">{book.title}</div>
-                  )}
-
-                  {/* Button to remove a book from log */}
-                  <button onClick={() => deleteBook(user, book)} className="remove-button">
-                    Remove
-                  </button>
-                </div>
+                <Book
+                  book={book}
+                  cover={book.thumbnail}
+                  loggedBooks={loggedBooks}
+                  addBook={addBook}
+                  deleteBook={deleteBook}
+                  user={user}
+                  title={book.title}
+                />
               </li>
             ))}
           </ul>
@@ -145,22 +134,19 @@ export default function BookLogPage({ user, deleteBook, loggedBooks }) {
 
       {noPageCountBooks.length > 0 && sortOption.includes('Length') && (
         <div>
-          <h2>Unrated Books</h2>
+          <h2>No Page Count Available</h2>
           <ul>
             {noPageCountBooks.map(book => (
               <li key={book.id}>
-                <div className="book-container">
-                  {book.thumbnail ? (
-                    <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
-                  ) : (
-                    <div className="alt-cover">{book.title}</div>
-                  )}
-
-                  {/* Button to remove a book from log */}
-                  <button onClick={() => deleteBook(user, book)} className="remove-button">
-                    Remove
-                  </button>
-                </div>
+                <Book
+                  book={book}
+                  cover={book.thumbnail}
+                  loggedBooks={loggedBooks}
+                  addBook={addBook}
+                  deleteBook={deleteBook}
+                  user={user}
+                  title={book.title}
+                />
               </li>
             ))}
           </ul>
