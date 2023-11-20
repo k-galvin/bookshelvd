@@ -18,6 +18,10 @@ export default function BookLogPage({ user, deleteBook, loggedBooks }) {
         return a.dateLogged - b.dateLogged
       case 'newestToOldestLogged':
         return b.dateLogged - a.dateLogged
+      case 'shortestToLongestLength':
+        return a.pageCount - b.pageCount
+      case 'longestToShortestLength':
+        return b.pageCount - a.pageCount
       default:
         return 0
     }
@@ -25,6 +29,10 @@ export default function BookLogPage({ user, deleteBook, loggedBooks }) {
 
   // Sort the loggedBooks array based on the selected sorting option
   const sortedBooks = loggedBooks ? [...loggedBooks].sort(compareFunction) : null
+  const unratedBooks = loggedBooks ? loggedBooks.filter(book => book.averageRating === '') : []
+  const ratedBooks = sortedBooks ? sortedBooks.filter(book => !unratedBooks.includes(book)) : []
+  const noPageCountBooks = loggedBooks ? loggedBooks.filter(book => book.pageCount === '') : []
+  const pageCountBooks = sortedBooks ? sortedBooks.filter(book => !noPageCountBooks.includes(book)) : []
 
   return (
     <div>
@@ -45,30 +53,118 @@ export default function BookLogPage({ user, deleteBook, loggedBooks }) {
           <option value="newestToOldestLogged">Newest First</option>
           <option value="oldestToNewestLogged">Earliest First</option>
         </optgroup>
+        <optgroup label="Book Length">
+          <option value="shortestToLongestLength">Shortest First</option>
+          <option value="longestToShortestLength">Longest First</option>
+        </optgroup>
       </select>
 
       {/* Display sorted logged books */}
       {sortedBooks ? (
         <ul>
-          {sortedBooks.map(book => (
-            <li key={book.id}>
-              <div className="book-container">
-                {book.thumbnail ? (
-                  <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
-                ) : (
-                  <div className="alt-cover">{book.title}</div>
-                )}
+          {/* If sorting by rating, only display those with ratings here */}
+          {sortOption.includes('Rating')
+            ? ratedBooks.map(book => (
+                <li key={book.id}>
+                  <div className="book-container">
+                    {book.thumbnail ? (
+                      <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
+                    ) : (
+                      <div className="alt-cover">{book.title}</div>
+                    )}
 
-                {/* Button to remove a book from log */}
-                <button onClick={() => deleteBook(user, book)} className="remove-button">
-                  Remove
-                </button>
-              </div>
-            </li>
-          ))}
+                    {/* Button to remove a book from log */}
+                    <button onClick={() => deleteBook(user, book)} className="remove-button">
+                      Remove
+                    </button>
+                  </div>
+                </li>
+              ))
+            : sortOption.includes('Length')
+            ? pageCountBooks.map(book => (
+                <li key={book.id}>
+                  <div className="book-container">
+                    {book.thumbnail ? (
+                      <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
+                    ) : (
+                      <div className="alt-cover">{book.title}</div>
+                    )}
+
+                    {/* Button to remove a book from log */}
+                    <button onClick={() => deleteBook(user, book)} className="remove-button">
+                      Remove
+                    </button>
+                  </div>
+                </li>
+              ))
+            : sortedBooks.map(book => (
+                <li key={book.id}>
+                  <div className="book-container">
+                    {book.thumbnail ? (
+                      <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
+                    ) : (
+                      <div className="alt-cover">{book.title}</div>
+                    )}
+
+                    {/* Button to remove a book from log */}
+                    <button onClick={() => deleteBook(user, book)} className="remove-button">
+                      Remove
+                    </button>
+                  </div>
+                </li>
+              ))}
         </ul>
       ) : (
         'No Logged Books'
+      )}
+
+      {/* Unrated books displayed here if sorting by rating */}
+      {unratedBooks.length > 0 && sortOption.includes('Rating') && (
+        <div>
+          <h2>Unrated Books</h2>
+          <ul>
+            {unratedBooks.map(book => (
+              <li key={book.id}>
+                <div className="book-container">
+                  {book.thumbnail ? (
+                    <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
+                  ) : (
+                    <div className="alt-cover">{book.title}</div>
+                  )}
+
+                  {/* Button to remove a book from log */}
+                  <button onClick={() => deleteBook(user, book)} className="remove-button">
+                    Remove
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {noPageCountBooks.length > 0 && sortOption.includes('Length') && (
+        <div>
+          <h2>Unrated Books</h2>
+          <ul>
+            {noPageCountBooks.map(book => (
+              <li key={book.id}>
+                <div className="book-container">
+                  {book.thumbnail ? (
+                    <img src={book.thumbnail} className="cover-img" alt={`${book.title} Cover`} />
+                  ) : (
+                    <div className="alt-cover">{book.title}</div>
+                  )}
+
+                  {/* Button to remove a book from log */}
+                  <button onClick={() => deleteBook(user, book)} className="remove-button">
+                    Remove
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   )
