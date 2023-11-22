@@ -2,7 +2,7 @@ import Book from './Book'
 
 export default function LoggedBookGrid({ books, addBook, deleteBook, user, loggedBooks, cover, title }) {
   return (
-    <div className="small-books-container">
+    <div className="logged-books-container">
       {books.map(book => (
         <div key={book.id}>
           <Book

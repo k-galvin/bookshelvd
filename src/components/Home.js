@@ -10,7 +10,7 @@ export default function Home({ user, addBook, deleteBook, loggedBooks }) {
     'Taylor Jenkins Reid',
     'Kerstin Gier',
     'E.M. Forster',
-    'Jane Austen'
+    'Jennifer Lynn Barnes'
   ]
   const [selectedAuthor, setSelectedAuthor] = useState('')
   const [authorBooks, setAuthorBooks] = useState([])

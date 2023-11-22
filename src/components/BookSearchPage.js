@@ -21,14 +21,14 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
   }, [query])
 
   return (
-    <div>
+    <div className="search-page">
       <h2>Search Books</h2>
       {/* Search query input */}
-      <input type="text" value={query} onChange={e => setQuery(e.target.value)} />
+      <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Search for books..." />
 
       {/* Display at most 10 books that match the query */}
       {queriedBooks ? (
-        <div className="small-books-container">
+        <div className="searched-books-container">
           {queriedBooks.map(book => (
             <div key={book.id}>
               <Book

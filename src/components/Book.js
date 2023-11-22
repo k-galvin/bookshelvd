@@ -11,7 +11,7 @@ export default function Book({ book, loggedBooks, addBook, deleteBook, user, cov
 
   const getSizeStyle = () => {
     if (size === 'large') {
-      return { width: '160px', height: '240px' } // Set your small size styles
+      return { width: '160px', height: '230px' } // Set your small size styles
     } else {
       return { width: '80px', height: '120px' } // Set your large size styles
     }
@@ -22,7 +22,7 @@ export default function Book({ book, loggedBooks, addBook, deleteBook, user, cov
   return (
     <div className="book-container">
       {cover ? (
-        <div className="cover-container">
+        <div className="cover-container" style={sizeStyle}>
           <img src={cover} className="cover-img" alt={`${title} Cover`} style={sizeStyle} />
           <div>
             {isBookLogged ? (
@@ -49,7 +49,9 @@ export default function Book({ book, loggedBooks, addBook, deleteBook, user, cov
           </div>
         </div>
       ) : (
-        <div className="alt-cover">{title}</div>
+        <div className="alt-cover" style={sizeStyle}>
+          <div className="alt-cover-text">{title}</div>
+        </div>
       )}
     </div>
   )

@@ -42,7 +42,7 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router className="App">
       <Header user={user} />
 
       <Routes>
