@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react'
 import BookSearchPage from './BookSearchPage'
 import BookLogPage from './BookLogPage'
 import Header from './Header'
+import Home from './Home'
 
 function App() {
   const [loggedBooks, setLoggedBooks] = useState([])
@@ -45,7 +46,7 @@ function App() {
       <Header user={user} />
 
       <Routes>
-        <Route path="/" element={<div>Home</div>} />
+        <Route path="/" element={<Home />} />
         <Route
           path="/book-search"
           element={<BookSearchPage user={user} addBook={addBook} deleteBook={deleteBook} loggedBooks={loggedBooks} />}

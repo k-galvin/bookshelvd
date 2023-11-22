@@ -7,10 +7,10 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
   const [queriedBooks, setQueriedBooks] = useState([])
 
   useEffect(() => {
-    // Function to handle the book search
-    const handleSearch = () => {
+    const handleSearch = async () => {
       if (query.trim() !== '') {
-        searchBooks(query, setQueriedBooks)
+        const response = await searchBooks(query)
+        setQueriedBooks(response)
       } else {
         // If the query is empty, set the queried books to an empty array
         setQueriedBooks([])

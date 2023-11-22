@@ -1,7 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Book({ book, loggedBooks, addBook, deleteBook, user, cover, title }) {
-  const [isBookLogged, setIsBookLogged] = useState(loggedBooks.some(loggedBook => loggedBook.id === book.id))
+  const [isBookLogged, setIsBookLogged] = useState(false)
+
+  useEffect(() => {
+    if (loggedBooks) {
+      setIsBookLogged(loggedBooks.some(loggedBook => loggedBook.id === book.id))
+    }
+  }, [loggedBooks, book])
 
   return (
     <div className="book-container">

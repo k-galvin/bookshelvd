@@ -1,5 +1,5 @@
 // Search through books in the Google Books API to get those that match the query
-const searchBooks = async (query, setQueriedBooks) => {
+const searchBooks = async query => {
   try {
     let url = `https://www.googleapis.com/books/v1/volumes?q=${query}`
     const response = await fetch(url)
@@ -9,7 +9,7 @@ const searchBooks = async (query, setQueriedBooks) => {
     }
 
     const data = await response.json()
-    setQueriedBooks(data.items)
+    return data.items
   } catch (error) {
     console.error('Error searching books:', error)
   }
