@@ -13,8 +13,8 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
   const pageCountBooks = sortedBooks ? sortedBooks.filter(book => !noPageCountBooks.includes(book)) : []
 
   return (
-    <div>
-      <h2>Logged Books</h2>
+    <div className="book-log-page">
+      <h2 className="title">Logged Books</h2>
 
       {/* Dropdown for sorting options */}
       <label htmlFor="sortOptions">Sort by: </label>

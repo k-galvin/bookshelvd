@@ -42,21 +42,27 @@ function App() {
   }
 
   return (
-    <Router className="App">
-      <Header user={user} />
+    <div className="app-container">
+      <Router>
+        <Header user={user} />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route
-          path="/book-search"
-          element={<BookSearchPage user={user} addBook={addBook} deleteBook={deleteBook} loggedBooks={loggedBooks} />}
-        />
-        <Route
-          path="/book-log"
-          element={<BookLogPage user={user} addBook={addBook} deleteBook={deleteBook} loggedBooks={loggedBooks} />}
-        />
-      </Routes>
-    </Router>
+        <div className="pages-container">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/book-search"
+              element={
+                <BookSearchPage user={user} addBook={addBook} deleteBook={deleteBook} loggedBooks={loggedBooks} />
+              }
+            />
+            <Route
+              path="/book-log"
+              element={<BookLogPage user={user} addBook={addBook} deleteBook={deleteBook} loggedBooks={loggedBooks} />}
+            />
+          </Routes>
+        </div>
+      </Router>
+    </div>
   )
 }
 
