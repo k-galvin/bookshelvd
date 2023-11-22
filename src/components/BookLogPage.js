@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { getSortedBooks } from '../services/bookService'
-import BookGrid from './BookGrid'
+import LoggedBookGrid from './LoggedBookGrid'
 
 export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) {
   const [sortOption, setSortOption] = useState('newestToOldest')
@@ -41,7 +41,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
       {sortedBooks ? (
         <div>
           {sortOption.includes('Rating') && (
-            <BookGrid
+            <LoggedBookGrid
               books={ratedBooks}
               addBook={addBook}
               deleteBook={deleteBook}
@@ -51,7 +51,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
           )}
 
           {sortOption.includes('Length') && (
-            <BookGrid
+            <LoggedBookGrid
               books={pageCountBooks}
               addBook={addBook}
               deleteBook={deleteBook}
@@ -61,7 +61,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
           )}
 
           {!sortOption.includes('Rating') && !sortOption.includes('Length') && (
-            <BookGrid
+            <LoggedBookGrid
               books={sortedBooks}
               addBook={addBook}
               deleteBook={deleteBook}
@@ -78,7 +78,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
       {unratedBooks.length > 0 && sortOption.includes('Rating') && (
         <div>
           <h2>Unrated Books</h2>
-          <BookGrid
+          <LoggedBookGrid
             books={unratedBooks}
             addBook={addBook}
             deleteBook={deleteBook}
@@ -92,7 +92,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
       {noPageCountBooks.length > 0 && sortOption.includes('Length') && (
         <div>
           <h2>No Page Count Available</h2>
-          <BookGrid
+          <LoggedBookGrid
             books={noPageCountBooks}
             addBook={addBook}
             deleteBook={deleteBook}

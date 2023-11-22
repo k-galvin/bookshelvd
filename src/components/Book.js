@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-export default function Book({ book, loggedBooks, addBook, deleteBook, user, cover, title }) {
+export default function Book({ book, loggedBooks, addBook, deleteBook, user, cover, title, size }) {
   const [isBookLogged, setIsBookLogged] = useState(false)
 
   useEffect(() => {
@@ -9,11 +9,21 @@ export default function Book({ book, loggedBooks, addBook, deleteBook, user, cov
     }
   }, [loggedBooks, book])
 
+  const getSizeStyle = () => {
+    if (size === 'large') {
+      return { width: '160px', height: '240px' } // Set your small size styles
+    } else {
+      return { width: '80px', height: '120px' } // Set your large size styles
+    }
+  }
+
+  const sizeStyle = getSizeStyle()
+
   return (
     <div className="book-container">
       {cover ? (
-        <>
-          <img src={cover} className="cover-img" alt={`${title} Cover`} />
+        <div className="cover-container">
+          <img src={cover} className="cover-img" alt={`${title} Cover`} style={sizeStyle} />
           <div>
             {isBookLogged ? (
               <span
@@ -37,7 +47,7 @@ export default function Book({ book, loggedBooks, addBook, deleteBook, user, cov
               </span>
             )}
           </div>
-        </>
+        </div>
       ) : (
         <div className="alt-cover">{title}</div>
       )}

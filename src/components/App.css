@@ -2,28 +2,30 @@
   text-align: center;
 }
 
+header {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* Logged Book Card */
 .book-container {
-  width: 80px;
-  height: 140px;
   position: relative;
 }
 
-.cover-img {
-  width: 80px;
-  height: 120px;
+.cover-container {
+  position: relative;
+  display: inline-block;
 }
 
 .overlay-icon {
   font-size: 10px;
-  height: 20px;
+  height: 15px;
   position: absolute;
   top: 0;
   right: 0;
   color: white;
   border: none;
   padding: 5px;
-  cursor: pointer;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
@@ -46,4 +48,23 @@
   display: flex;
   align-items: center;
   border: 0.1em black solid;
+}
+
+.small-books-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3px;
+  padding: 30px;
+}
+
+.large-books-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 40px;
+}
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

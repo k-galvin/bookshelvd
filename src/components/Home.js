@@ -46,7 +46,7 @@ export default function Home({ user, addBook, deleteBook, loggedBooks }) {
   }, [selectedAuthor])
 
   return (
-    <div>
+    <div className="home-page">
       <h2>Featured Author: {selectedAuthor}</h2>
 
       {loading ? (

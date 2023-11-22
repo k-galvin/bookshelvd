@@ -2,9 +2,9 @@ import Book from './Book'
 
 export default function AuthorList({ authorBooks, loggedBooks, addBook, deleteBook, user }) {
   return authorBooks && authorBooks.length > 0 ? (
-    <ul>
+    <div className="large-books-container">
       {authorBooks.slice(0, 5).map(book => (
-        <li key={book.id}>
+        <div key={book.id}>
           <Book
             book={book}
             cover={
@@ -17,10 +17,11 @@ export default function AuthorList({ authorBooks, loggedBooks, addBook, deleteBo
             deleteBook={deleteBook}
             user={user}
             title={book.volumeInfo.title}
+            size="large"
           />
-        </li>
+        </div>
       ))}
-    </ul>
+    </div>
   ) : (
     'No results'
   )
