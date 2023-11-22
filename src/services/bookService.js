@@ -65,3 +65,32 @@ export async function fetchLoggedBooks(userId) {
     ...doc.data()
   }))
 }
+
+export function getSortedBooks(loggedBooks, sortOption) {
+  if (!loggedBooks) return null
+
+  const compareFunction = (a, b) => {
+    switch (sortOption) {
+      case 'oldestToNewestRelease':
+        return new Date(a.publishedDate) - new Date(b.publishedDate)
+      case 'newestToOldestRelease':
+        return new Date(b.publishedDate) - new Date(a.publishedDate)
+      case 'highestToLowestRating':
+        return b.averageRating - a.averageRating
+      case 'lowestToHighestRating':
+        return a.averageRating - b.averageRating
+      case 'oldestToNewestLogged':
+        return a.dateLogged - b.dateLogged
+      case 'newestToOldestLogged':
+        return b.dateLogged - a.dateLogged
+      case 'shortestToLongestLength':
+        return a.pageCount - b.pageCount
+      case 'longestToShortestLength':
+        return b.pageCount - a.pageCount
+      default:
+        return 0
+    }
+  }
+
+  return [...loggedBooks].sort(compareFunction)
+}

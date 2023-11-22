@@ -1,35 +1,12 @@
 import { useState } from 'react'
-import Book from './Book'
+import { getSortedBooks } from '../services/bookService'
+import BookGrid from './BookGrid'
 
 export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) {
   const [sortOption, setSortOption] = useState('newestToOldest')
 
-  // Function to compare two books based on the selected sorting option
-  const compareFunction = (a, b) => {
-    switch (sortOption) {
-      case 'oldestToNewestRelease':
-        return new Date(a.publishedDate) - new Date(b.publishedDate)
-      case 'newestToOldestRelease':
-        return new Date(b.publishedDate) - new Date(a.publishedDate)
-      case 'highestToLowestRating':
-        return b.averageRating - a.averageRating
-      case 'lowestToHighestRating':
-        return a.averageRating - b.averageRating
-      case 'oldestToNewestLogged':
-        return a.dateLogged - b.dateLogged
-      case 'newestToOldestLogged':
-        return b.dateLogged - a.dateLogged
-      case 'shortestToLongestLength':
-        return a.pageCount - b.pageCount
-      case 'longestToShortestLength':
-        return b.pageCount - a.pageCount
-      default:
-        return 0
-    }
-  }
-
   // Sort the loggedBooks array based on the selected sorting option
-  const sortedBooks = loggedBooks ? [...loggedBooks].sort(compareFunction) : null
+  const sortedBooks = getSortedBooks(loggedBooks, sortOption)
   const unratedBooks = loggedBooks ? loggedBooks.filter(book => book.averageRating === '') : []
   const ratedBooks = sortedBooks ? sortedBooks.filter(book => !unratedBooks.includes(book)) : []
   const noPageCountBooks = loggedBooks ? loggedBooks.filter(book => book.pageCount === '') : []
@@ -62,50 +39,37 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
 
       {/* Display sorted logged books */}
       {sortedBooks ? (
-        <ul>
-          {/* If sorting by rating, only display those with ratings here */}
-          {sortOption.includes('Rating')
-            ? ratedBooks.map(book => (
-                <li key={book.id}>
-                  <Book
-                    book={book}
-                    cover={book.thumbnail}
-                    loggedBooks={loggedBooks}
-                    addBook={addBook}
-                    deleteBook={deleteBook}
-                    user={user}
-                    title={book.title}
-                  />
-                </li>
-              ))
-            : sortOption.includes('Length')
-            ? pageCountBooks.map(book => (
-                <li key={book.id}>
-                  <Book
-                    book={book}
-                    cover={book.thumbnail}
-                    loggedBooks={loggedBooks}
-                    addBook={addBook}
-                    deleteBook={deleteBook}
-                    user={user}
-                    title={book.title}
-                  />
-                </li>
-              ))
-            : sortedBooks.map(book => (
-                <li key={book.id}>
-                  <Book
-                    book={book}
-                    cover={book.thumbnail}
-                    loggedBooks={loggedBooks}
-                    addBook={addBook}
-                    deleteBook={deleteBook}
-                    user={user}
-                    title={book.title}
-                  />
-                </li>
-              ))}
-        </ul>
+        <div>
+          {sortOption.includes('Rating') && (
+            <BookGrid
+              books={ratedBooks}
+              addBook={addBook}
+              deleteBook={deleteBook}
+              user={user}
+              loggedBooks={loggedBooks}
+            />
+          )}
+
+          {sortOption.includes('Length') && (
+            <BookGrid
+              books={pageCountBooks}
+              addBook={addBook}
+              deleteBook={deleteBook}
+              user={user}
+              loggedBooks={loggedBooks}
+            />
+          )}
+
+          {!sortOption.includes('Rating') && !sortOption.includes('Length') && (
+            <BookGrid
+              books={sortedBooks}
+              addBook={addBook}
+              deleteBook={deleteBook}
+              user={user}
+              loggedBooks={loggedBooks}
+            />
+          )}
+        </div>
       ) : (
         'No Logged Books'
       )}
@@ -114,42 +78,27 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
       {unratedBooks.length > 0 && sortOption.includes('Rating') && (
         <div>
           <h2>Unrated Books</h2>
-          <ul>
-            {unratedBooks.map(book => (
-              <li key={book.id}>
-                <Book
-                  book={book}
-                  cover={book.thumbnail}
-                  loggedBooks={loggedBooks}
-                  addBook={addBook}
-                  deleteBook={deleteBook}
-                  user={user}
-                  title={book.title}
-                />
-              </li>
-            ))}
-          </ul>
+          <BookGrid
+            books={unratedBooks}
+            addBook={addBook}
+            deleteBook={deleteBook}
+            user={user}
+            loggedBooks={loggedBooks}
+          />
         </div>
       )}
 
+      {/* No page count books displayed here if sorting by length */}
       {noPageCountBooks.length > 0 && sortOption.includes('Length') && (
         <div>
           <h2>No Page Count Available</h2>
-          <ul>
-            {noPageCountBooks.map(book => (
-              <li key={book.id}>
-                <Book
-                  book={book}
-                  cover={book.thumbnail}
-                  loggedBooks={loggedBooks}
-                  addBook={addBook}
-                  deleteBook={deleteBook}
-                  user={user}
-                  title={book.title}
-                />
-              </li>
-            ))}
-          </ul>
+          <BookGrid
+            books={noPageCountBooks}
+            addBook={addBook}
+            deleteBook={deleteBook}
+            user={user}
+            loggedBooks={loggedBooks}
+          />
         </div>
       )}
     </div>
