@@ -5,16 +5,15 @@ export default function Header({ user }) {
   return (
     <header>
       <Link to="/" className="header-link">
-        HOME
+        <img src="logo-with-text.png" alt="bookshelved logo" className="logo-image"></img>
       </Link>
       <Link to="/book-search" className="header-link">
-        BOOK SEARCH
+        <span class="material-symbols-outlined">search</span>
       </Link>
       <Link to="/book-log" className="header-link">
-        BOOK LOG
+        LOGGED BOOKS
       </Link>
-
-      {!user ? <SignIn /> : <SignOut />}
+      <div className="header-link">{!user ? <SignIn /> : <SignOut />}</div>
     </header>
   )
 }

@@ -3,7 +3,8 @@
 /* Header */
 header {
   display: grid;
-  grid-template-columns: 40% 20% 20% 20%;
+  grid-template-columns: 55% 15% 15% 15%;
+  grid-template-rows: 100%;
   color: white;
   background-color: #14191d;
   font-weight: bold;
@@ -11,10 +12,16 @@ header {
 }
 
 .header-link {
+  display: flex;
+  align-items: center;
   color: white;
   font-size: 1em;
   text-decoration: none;
   padding: 1em;
+}
+
+.logo-image {
+  max-height: 4em;
 }
 
 /* Logged Book Card */
@@ -50,6 +57,7 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .overlay-icon.red {

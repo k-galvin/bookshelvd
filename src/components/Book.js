@@ -21,38 +21,32 @@ export default function Book({ book, loggedBooks, addBook, deleteBook, user, cov
 
   return (
     <div className="book-container">
-      {cover ? (
-        <div className="cover-container" style={sizeStyle}>
-          <img src={cover} className="cover-img" alt={`${title} Cover`} style={sizeStyle} />
-          <div>
-            {isBookLogged ? (
-              <span
-                onClick={() => {
-                  deleteBook(user, book)
-                  setIsBookLogged(false)
-                }}
-                className="overlay-icon red"
-              >
-                &#x2716; {/* 'x' character */}
-              </span>
-            ) : (
-              <span
-                onClick={() => {
-                  addBook(user, book)
-                  setIsBookLogged(true)
-                }}
-                className="overlay-icon green"
-              >
-                &#10003; {/* Checkmark */}
-              </span>
-            )}
-          </div>
+      <div className="cover-container" style={sizeStyle}>
+        <img src={cover} className="cover-img" alt={`${title}`} style={sizeStyle} />
+        <div>
+          {isBookLogged ? (
+            <span
+              onClick={() => {
+                deleteBook(user, book)
+                setIsBookLogged(false)
+              }}
+              className="overlay-icon red"
+            >
+              &#x2716; {/* 'x' character */}
+            </span>
+          ) : (
+            <span
+              onClick={() => {
+                addBook(user, book)
+                setIsBookLogged(true)
+              }}
+              className="overlay-icon green"
+            >
+              &#10003; {/* Checkmark */}
+            </span>
+          )}
         </div>
-      ) : (
-        <div className="alt-cover" style={sizeStyle}>
-          <div className="alt-cover-text">{title}</div>
-        </div>
-      )}
+      </div>
     </div>
   )
 }
