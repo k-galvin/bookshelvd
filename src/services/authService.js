@@ -4,14 +4,36 @@ import { auth, db } from '../firebaseConfig'
 import { collection, doc, setDoc, getDoc } from 'firebase/firestore'
 
 export function SignIn() {
-  return <button onClick={() => signInWithPopup(auth, new GoogleAuthProvider())}>Sign In</button>
+  return (
+    <button className="user-button" onClick={() => signInWithPopup(auth, new GoogleAuthProvider())}>
+      SIGN IN
+    </button>
+  )
 }
 
 export function SignOut() {
+  const [isDropdownOpen, setDropdownOpen] = useState(false)
+
+  const handleSignOut = () => {
+    signOut(auth)
+    setDropdownOpen(false) // Close the dropdown after signing out
+  }
+
   return (
     <div>
-      Hello, {auth.currentUser.displayName} &nbsp;
-      <button onClick={() => signOut(auth)}>Sign Out</button>
+      <div onClick={() => setDropdownOpen(!isDropdownOpen)}>
+        <div className="username-container">
+          <div className="username">{auth.currentUser.displayName}</div>
+          <div class="material-symbols-outlined">expand_more</div>
+        </div>
+        {isDropdownOpen && (
+          <div className="dropdown-content">
+            <button className="user-button" onClick={handleSignOut}>
+              SIGN OUT
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
