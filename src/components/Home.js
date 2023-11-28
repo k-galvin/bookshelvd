@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { searchBooks } from '../services/apiService'
+import LoginPage from './LoginPage'
 import AuthorList from './AuthorList'
 
 export default function Home({ user, addBook, deleteBook, loggedBooks }) {
@@ -44,6 +45,10 @@ export default function Home({ user, addBook, deleteBook, loggedBooks }) {
       fetchBooksForAuthor(selectedAuthor)
     }
   }, [selectedAuthor])
+
+  if (!user) {
+    return <LoginPage />
+  }
 
   return (
     <div className="home-page">

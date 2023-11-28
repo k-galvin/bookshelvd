@@ -18,6 +18,9 @@ export default function AuthorList({ authorBooks, loggedBooks, addBook, deleteBo
             user={user}
             title={book.volumeInfo.title}
             size="large"
+            authors={book.volumeInfo.authors}
+            description={book.volumeInfo.description}
+            averageRating={book.volumeInfo.averageRating}
           />
         </div>
       ))}

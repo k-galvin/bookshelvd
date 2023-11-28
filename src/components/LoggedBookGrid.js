@@ -1,6 +1,6 @@
 import Book from './Book'
 
-export default function LoggedBookGrid({ books, addBook, deleteBook, user, loggedBooks, cover, title }) {
+export default function LoggedBookGrid({ books, addBook, deleteBook, user, loggedBooks }) {
   return (
     <div className="logged-books-container">
       {books.map(book => (
@@ -13,6 +13,9 @@ export default function LoggedBookGrid({ books, addBook, deleteBook, user, logge
             deleteBook={deleteBook}
             user={user}
             title={book.title}
+            authors={book.authors}
+            description={book.description}
+            averageRating={book.averageRating}
           />
         </div>
       ))}

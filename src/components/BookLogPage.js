@@ -1,9 +1,14 @@
 import { useState } from 'react'
 import { getSortedBooks } from '../services/bookService'
 import LoggedBookGrid from './LoggedBookGrid'
+import LoginPage from './LoginPage'
 
 export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) {
   const [sortOption, setSortOption] = useState('newestToOldest')
+
+  if (!user) {
+    return <LoginPage />
+  }
 
   // Sort the loggedBooks array based on the selected sorting option
   const sortedBooks = getSortedBooks(loggedBooks, sortOption)

@@ -1,7 +1,21 @@
 import { useState, useEffect } from 'react'
+import BookInfo from './BookInfo'
 
-export default function Book({ book, loggedBooks, addBook, deleteBook, user, cover, title, size }) {
+export default function Book({
+  book,
+  loggedBooks,
+  addBook,
+  deleteBook,
+  user,
+  cover,
+  title,
+  size,
+  authors,
+  description,
+  averageRating
+}) {
   const [isBookLogged, setIsBookLogged] = useState(false)
+  const [displayInfo, setDisplayInfo] = useState(false)
 
   useEffect(() => {
     if (loggedBooks) {
@@ -22,7 +36,15 @@ export default function Book({ book, loggedBooks, addBook, deleteBook, user, cov
   return (
     <div className="book-container">
       <div className="cover-container" style={sizeStyle}>
-        <img src={cover} className="cover-img" alt={`${title}`} style={sizeStyle} />
+        <img
+          src={cover}
+          className="cover-img"
+          alt={`${title}`}
+          style={sizeStyle}
+          onClick={() => {
+            setDisplayInfo(true)
+          }}
+        />
         <div>
           {isBookLogged ? (
             <span
@@ -47,6 +69,18 @@ export default function Book({ book, loggedBooks, addBook, deleteBook, user, cov
           )}
         </div>
       </div>
+
+      {displayInfo ? (
+        <BookInfo
+          setDisplayInfo={setDisplayInfo}
+          title={title}
+          authors={authors}
+          description={description}
+          averageRating={averageRating}
+        />
+      ) : (
+        ''
+      )}
     </div>
   )
 }

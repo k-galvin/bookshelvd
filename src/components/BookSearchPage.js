@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { searchBooks } from '../services/apiService'
 import Book from './Book'
+import LoginPage from './LoginPage'
 
 export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks }) {
   const [query, setQuery] = useState('')
@@ -19,6 +20,10 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
 
     handleSearch()
   }, [query])
+
+  if (!user) {
+    return <LoginPage />
+  }
 
   return (
     <div className="search-page">
@@ -43,6 +48,9 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
                 deleteBook={deleteBook}
                 user={user}
                 title={book.volumeInfo.title}
+                authors={book.volumeInfo.authors}
+                description={book.volumeInfo.description}
+                averageRating={book.volumeInfo.averageRating}
               />
             </div>
           ))}
