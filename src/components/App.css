@@ -1,23 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;700&family=Neucha&display=swap');
 
+body {
+  height: 100%;
+  background-image: linear-gradient(#182834, #14191d);
+  background-size: cover;
+  color: white;
+  overflow: scroll;
+}
+
+/* App  */
+.app-container {
+  display: grid;
+  grid-template-rows: 10% 90%;
+  /* height: 100vh; */
+}
+
 /* Header */
 header {
   display: grid;
-  grid-template-columns: 5% 20% 50% 5% 10% 10%;
+  grid-template-columns: 5% 20% 45% 5% 10% 10% 5%;
   grid-template-rows: 100%;
-  color: white;
   background-color: #14191d;
   font-weight: bold;
   font-family: 'Montserrat', sans-serif;
 }
 
 .header-link {
+  color: white;
   display: flex;
   align-items: center;
-  color: white;
   font-size: 1em;
   text-decoration: none;
-  padding: 1em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-left: 1em;
 }
 
 .header-link.logo {
@@ -60,11 +76,7 @@ header {
   cursor: pointer;
 }
 
-/* Logged Book Card */
-.book-container {
-  position: relative;
-}
-
+/* Book Card */
 .cover-container {
   position: relative;
   display: inline-block;
@@ -84,7 +96,6 @@ header {
   position: absolute;
   top: 0;
   right: 0;
-  color: white;
   border: none;
   padding: 5px;
   opacity: 0;
@@ -116,56 +127,107 @@ header {
   justify-content: center;
 }
 
-.logged-books-container {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 10px;
-  padding: 30px;
+/* Logged Books Page */
+.books-grid-container {
+  grid-column: 2;
+  grid-row: 2;
 }
 
-.large-books-container {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 40px;
+.missing-info-books-grid-container {
+  grid-column: 2;
+  grid-row: 3;
 }
 
-.searched-books-container {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 20px;
-  padding: 30px;
-}
-
-.home-page {
+.books-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-image: linear-gradient(#182834, #14191d);
-  color: white;
-  height: 100vh;
+  flex-wrap: wrap;
+  justify-content: flex-start; /* Start from the left side */
+  margin-top: 1em;
 }
 
+.small-book-container {
+  padding-right: 0.8em;
+  padding-bottom: 0.5em;
+  clear: both;
+}
+
+/* Adjust the width for smaller screens */
+@media (max-width: 768px) {
+  .small-book-container {
+    width: calc(100% / 5 - 10px); /* Adjust width for 6 columns on narrower screens */
+  }
+}
+
+.book-log-page {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 6.5% 88.5% 5%;
+  grid-template-rows: 10% auto auto;
+}
+
+.book-log-title {
+  margin: 0;
+  padding-top: 1em;
+}
+
+.sort-container {
+  padding-right: 30px;
+}
+
+.sort-select {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #182834;
+  color: white;
+  font-weight: lighter;
+  border: none;
+  font-size: 1em;
+}
+
+.sort-label {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: lighter;
+}
+
+.book-log-header {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  padding-bottom: 0.8em;
+}
+
+/* Searched Books Page */
 .search-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-image: linear-gradient(#182834, #14191d);
-  color: white;
   height: 100vh;
 }
 
-.book-log-page {
-  background-image: linear-gradient(#182834, #14191d);
-  color: white;
-  height: 100vh;
+/* Home Page */
+.home-page {
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100vh;
 }
 
+.large-book-container {
+  padding-right: 0.8em;
+  padding-bottom: 0.5em;
+  clear: both;
+}
+
+/* Adjust the width for smaller screens */
+@media (max-width: 500px) {
+  .large-book-container {
+    width: calc(50% - 10px); /* Adjust width for 2 columns on narrower screens */
+  }
+}
+
+/* Login Page */
 .login-page {
-  background-image: linear-gradient(#182834, #14191d);
-  color: white;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -174,22 +236,7 @@ header {
   padding-top: 3em;
 }
 
-.title {
-  margin: 0;
-  padding-top: 1em;
-  padding-bottom: 1em;
-}
-
-.app-container {
-  display: grid;
-  grid-template-rows: 10% 90%;
-  height: 100vh;
-}
-
-.content-container {
-  overflow: auto; /* Add scroll if content overflows */
-}
-
+/* Book Description Popup */
 .popup {
   color: black;
   position: fixed;

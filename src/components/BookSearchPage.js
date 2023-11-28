@@ -33,9 +33,9 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
 
       {/* Display at most 10 books that match the query */}
       {queriedBooks ? (
-        <div className="searched-books-container">
+        <div className="books-container">
           {queriedBooks.map(book => (
-            <div key={book.id}>
+            <div key={book.id} className="small-book-container">
               <Book
                 book={book}
                 cover={

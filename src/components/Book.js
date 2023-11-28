@@ -34,7 +34,7 @@ export default function Book({
   const sizeStyle = getSizeStyle()
 
   return (
-    <div className="book-container">
+    <div>
       <div className="cover-container" style={sizeStyle}>
         <img
           src={cover}

@@ -2,9 +2,9 @@ import Book from './Book'
 
 export default function AuthorList({ authorBooks, loggedBooks, addBook, deleteBook, user }) {
   return authorBooks && authorBooks.length > 0 ? (
-    <div className="large-books-container">
+    <div className="books-container">
       {authorBooks.slice(0, 5).map(book => (
-        <div key={book.id}>
+        <div key={book.id} className="large-book-container">
           <Book
             book={book}
             cover={

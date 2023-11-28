@@ -4,7 +4,7 @@ import LoggedBookGrid from './LoggedBookGrid'
 import LoginPage from './LoginPage'
 
 export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) {
-  const [sortOption, setSortOption] = useState('newestToOldest')
+  const [sortOption, setSortOption] = useState('newestToOldestLogged')
 
   if (!user) {
     return <LoginPage />
@@ -19,32 +19,43 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
 
   return (
     <div className="book-log-page">
-      <h2 className="title">Logged Books</h2>
+      <div className="book-log-header">
+        <h2 className="book-log-title">Logged Books</h2>
 
-      {/* Dropdown for sorting options */}
-      <label htmlFor="sortOptions">Sort by: </label>
-      <select id="sortOptions" value={sortOption} onChange={e => setSortOption(e.target.value)}>
-        <optgroup label="Release Date">
-          <option value="newestToOldestRelease">Newest First</option>
-          <option value="oldestToNewestRelease">Earliest First</option>
-        </optgroup>
-        <optgroup label="Average Rating">
-          <option value="highestToLowestRating">Highest First</option>
-          <option value="lowestToHighestRating">Lowest First</option>
-        </optgroup>
-        <optgroup label="Date Logged">
-          <option value="newestToOldestLogged">Newest First</option>
-          <option value="oldestToNewestLogged">Earliest First</option>
-        </optgroup>
-        <optgroup label="Book Length">
-          <option value="shortestToLongestLength">Shortest First</option>
-          <option value="longestToShortestLength">Longest First</option>
-        </optgroup>
-      </select>
+        {/* Dropdown for sorting options */}
+        <div className="sort-container">
+          <label className="sort-label" htmlFor="sortOptions">
+            Sort by
+          </label>
+          <select
+            className="sort-select"
+            id="sortOptions"
+            value={sortOption}
+            onChange={e => setSortOption(e.target.value)}
+          >
+            <optgroup label="Date Logged">
+              <option value="newestToOldestLogged">Newest First</option>
+              <option value="oldestToNewestLogged">Earliest First</option>
+            </optgroup>
+            <optgroup label="Release Date">
+              <option value="newestToOldestRelease">Newest First</option>
+              <option value="oldestToNewestRelease">Earliest First</option>
+            </optgroup>
+            <optgroup label="Average Rating">
+              <option value="highestToLowestRating">Highest First</option>
+              <option value="lowestToHighestRating">Lowest First</option>
+            </optgroup>
+            <optgroup label="Book Length">
+              <option value="shortestToLongestLength">Shortest First</option>
+              <option value="longestToShortestLength">Longest First</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
 
       {/* Display sorted logged books */}
       {sortedBooks ? (
-        <div>
+        <div className="books-grid-container">
           {sortOption.includes('Rating') && (
             <LoggedBookGrid
               books={ratedBooks}
@@ -81,7 +92,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
 
       {/* Unrated books displayed here if sorting by rating */}
       {unratedBooks.length > 0 && sortOption.includes('Rating') && (
-        <div>
+        <div className="missing-info-books-grid-container">
           <h2>Unrated Books</h2>
           <LoggedBookGrid
             books={unratedBooks}
@@ -95,7 +106,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
 
       {/* No page count books displayed here if sorting by length */}
       {noPageCountBooks.length > 0 && sortOption.includes('Length') && (
-        <div>
+        <div className="missing-info-books-grid-container">
           <h2>No Page Count Available</h2>
           <LoggedBookGrid
             books={noPageCountBooks}
