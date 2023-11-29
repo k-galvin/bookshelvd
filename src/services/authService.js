@@ -24,7 +24,7 @@ export function SignOut() {
       <div onClick={() => setDropdownOpen(!isDropdownOpen)}>
         <div className="username-container">
           <div className="username">{auth.currentUser.displayName}</div>
-          <div class="material-symbols-outlined">expand_more</div>
+          <div className="material-symbols-outlined">expand_more</div>
         </div>
         {isDropdownOpen && (
           <div className="dropdown-content">

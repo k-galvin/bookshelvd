@@ -9,7 +9,7 @@ export default function Header({ user }) {
       </Link>
       <div className="header-right">
         <Link to="/book-search" className="header-link search">
-          <span class="material-symbols-outlined">search</span>
+          <span className="material-symbols-outlined">search</span>
         </Link>
         <Link to="/book-log" className="header-link books">
           LOGGED BOOKS

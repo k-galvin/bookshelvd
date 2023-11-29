@@ -54,7 +54,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
       </div>
 
       {/* Display sorted logged books */}
-      {sortedBooks ? (
+      {sortedBooks.length !== 0 ? (
         <div className="books-grid-container">
           {sortOption.includes('Rating') && (
             <LoggedBookGrid
@@ -87,7 +87,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
           )}
         </div>
       ) : (
-        'No Logged Books'
+        <div className="books-grid-container">No Logged Books</div>
       )}
 
       {/* Unrated books displayed here if sorting by rating */}

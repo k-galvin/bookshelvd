@@ -5,13 +5,13 @@ import AuthorList from './AuthorList'
 
 export default function Home({ user, addBook, deleteBook, loggedBooks }) {
   const authors = [
-    'Charles Dickens',
     'Joan Didion',
     'Lucy Foley',
     'Taylor Jenkins Reid',
-    'Kerstin Gier',
-    'E.M. Forster',
-    'Jennifer Lynn Barnes'
+    'Stephanie Garber',
+    'Christelle Dabos',
+    'Leigh Bardugo',
+    'Marissa Meyer'
   ]
   const [selectedAuthor, setSelectedAuthor] = useState('')
   const [authorBooks, setAuthorBooks] = useState([])

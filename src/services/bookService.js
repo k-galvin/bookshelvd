@@ -38,7 +38,7 @@ export async function logBook(user, book) {
     const loggedBookRef = await addDoc(loggedBooksCollectionRef, bookData)
     return { userId, bookId: loggedBookRef.id, ...bookData }
   } catch (error) {
-    console.error('Error logging book:', error)
+    console.error('Error logging book:', error.message)
     throw error
   }
 }
@@ -57,13 +57,17 @@ export async function removeLoggedBook(user, id) {
 
 // Fetch logged books from firebase
 export async function fetchLoggedBooks(userId) {
-  // Fetch all the books in the user's read books log
-  const userRef = doc(db, 'users', userId)
-  const snapshot = await getDocs(collection(userRef, 'loggedBooks'))
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }))
+  try {
+    // Fetch all the books in the user's read books log
+    const userRef = doc(db, 'users', userId)
+    const snapshot = await getDocs(collection(userRef, 'loggedBooks'))
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+  } catch (error) {
+    throw error
+  }
 }
 
 export function getSortedBooks(loggedBooks, sortOption) {
