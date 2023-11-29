@@ -7,13 +7,15 @@ export default function Header({ user }) {
       <Link to="/" className="header-link logo">
         <img src="logo-with-text.png" alt="bookshelved logo" className="logo-image"></img>
       </Link>
-      <Link to="/book-search" className="header-link search">
-        <span class="material-symbols-outlined">search</span>
-      </Link>
-      <Link to="/book-log" className="header-link books">
-        LOGGED BOOKS
-      </Link>
-      <div className="header-link log-in">{!user ? <SignIn /> : <SignOut />}</div>
+      <div className="header-right">
+        <Link to="/book-search" className="header-link search">
+          <span class="material-symbols-outlined">search</span>
+        </Link>
+        <Link to="/book-log" className="header-link books">
+          LOGGED BOOKS
+        </Link>
+        <div className="header-link log-in">{!user ? <SignIn /> : <SignOut />}</div>
+      </div>
     </header>
   )
 }

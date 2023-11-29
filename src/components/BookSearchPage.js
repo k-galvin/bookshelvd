@@ -29,35 +29,43 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
     <div className="search-page">
       <h2>Search Books</h2>
       {/* Search query input */}
-      <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Search for books..." />
+      <input
+        className="search-bar"
+        type="text"
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Search for books..."
+      />
 
       {/* Display at most 10 books that match the query */}
-      {queriedBooks ? (
-        <div className="books-container">
-          {queriedBooks.map(book => (
-            <div key={book.id} className="small-book-container">
-              <Book
-                book={book}
-                cover={
-                  book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.smallThumbnail
-                    ? book.volumeInfo.imageLinks.smallThumbnail
-                    : null
-                }
-                loggedBooks={loggedBooks}
-                addBook={addBook}
-                deleteBook={deleteBook}
-                user={user}
-                title={book.volumeInfo.title}
-                authors={book.volumeInfo.authors}
-                description={book.volumeInfo.description}
-                averageRating={book.volumeInfo.averageRating}
-              />
-            </div>
-          ))}
-        </div>
-      ) : (
-        'No results'
-      )}
+      <div className="books-grid-container search">
+        {queriedBooks ? (
+          <div className="books-container">
+            {queriedBooks.map(book => (
+              <div key={book.id} className="small-book-container">
+                <Book
+                  book={book}
+                  cover={
+                    book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.smallThumbnail
+                      ? book.volumeInfo.imageLinks.smallThumbnail
+                      : null
+                  }
+                  loggedBooks={loggedBooks}
+                  addBook={addBook}
+                  deleteBook={deleteBook}
+                  user={user}
+                  title={book.volumeInfo.title}
+                  authors={book.volumeInfo.authors}
+                  description={book.volumeInfo.description}
+                  averageRating={book.volumeInfo.averageRating}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          'No results'
+        )}
+      </div>
     </div>
   )
 }

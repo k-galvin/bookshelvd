@@ -4,6 +4,7 @@ body {
   height: 100%;
   background-image: linear-gradient(#182834, #14191d);
   background-size: cover;
+  background-attachment: fixed;
   color: white;
   overflow: scroll;
 }
@@ -12,17 +13,19 @@ body {
 .app-container {
   display: grid;
   grid-template-rows: 10% 90%;
-  /* height: 100vh; */
 }
 
 /* Header */
 header {
-  display: grid;
-  grid-template-columns: 5% 20% 45% 5% 10% 10% 5%;
-  grid-template-rows: 100%;
+  display: flex;
+  justify-content: space-between;
   background-color: #14191d;
   font-weight: bold;
   font-family: 'Montserrat', sans-serif;
+}
+
+.header-right {
+  display: flex;
 }
 
 .header-link {
@@ -31,25 +34,11 @@ header {
   align-items: center;
   font-size: 1em;
   text-decoration: none;
-  padding-top: 1em;
-  padding-bottom: 1em;
-  padding-left: 1em;
+  padding: 1em;
 }
 
 .header-link.logo {
-  grid-column: 2;
-}
-
-.header-link.search {
-  grid-column: 4;
-}
-
-.header-link.books {
-  grid-column: 5;
-}
-
-.header-link.log-in {
-  grid-column: 6;
+  padding-left: 5.5em;
 }
 
 .logo-image {
@@ -60,6 +49,7 @@ header {
   display: flex;
   align-items: center;
   cursor: pointer;
+  padding-right: 6.5em;
 }
 
 .username {
@@ -115,7 +105,11 @@ header {
   background-color: green;
 }
 
-.book-container:hover .overlay-icon {
+.large-book-container:hover .overlay-icon {
+  opacity: 1;
+}
+
+.small-book-container:hover .overlay-icon {
   opacity: 1;
 }
 
@@ -129,13 +123,13 @@ header {
 
 /* Logged Books Page */
 .books-grid-container {
-  grid-column: 2;
   grid-row: 2;
+  padding: 0.8em 6em;
 }
 
 .missing-info-books-grid-container {
-  grid-column: 2;
   grid-row: 3;
+  padding: 0.8em 6em;
 }
 
 .books-container {
@@ -145,23 +139,25 @@ header {
   margin-top: 1em;
 }
 
+.books-container.home {
+  justify-content: center;
+}
+
 .small-book-container {
   padding-right: 0.8em;
   padding-bottom: 0.5em;
   clear: both;
 }
 
-/* Adjust the width for smaller screens */
 @media (max-width: 768px) {
   .small-book-container {
-    width: calc(100% / 5 - 10px); /* Adjust width for 6 columns on narrower screens */
+    width: calc(100% / 5 - 10px);
   }
 }
 
 .book-log-page {
   height: 100vh;
   display: grid;
-  grid-template-columns: 6.5% 88.5% 5%;
   grid-template-rows: 10% auto auto;
 }
 
@@ -189,20 +185,29 @@ header {
 }
 
 .book-log-header {
-  grid-column: 2;
   grid-row: 1;
   display: flex;
   justify-content: space-between;
-  align-items: end;
-  padding-bottom: 0.8em;
+  align-items: flex-end;
+  padding: 0.8em 6em;
 }
 
 /* Searched Books Page */
 .search-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  grid-template-rows: 10% 5% auto;
   height: 100vh;
+  justify-items: center;
+}
+
+.search-bar {
+  grid-row: 2;
+  width: 250px;
+  height: 15px;
+}
+
+.books-grid-container.search {
+  grid-row: 3;
 }
 
 /* Home Page */
@@ -216,13 +221,13 @@ header {
 .large-book-container {
   padding-right: 0.8em;
   padding-bottom: 0.5em;
-  clear: both;
+  display: flex;
+  justify-content: center;
 }
 
-/* Adjust the width for smaller screens */
 @media (max-width: 500px) {
   .large-book-container {
-    width: calc(50% - 10px); /* Adjust width for 2 columns on narrower screens */
+    width: calc(50% - 10px);
   }
 }
 
