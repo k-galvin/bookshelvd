@@ -1,1 +1,32 @@
-Book info is stored in firebase for low latency benefits.
+# Bookshelvd
+
+**_A Letterboxd Inspired Book Log_**
+
+# Deployed at:
+
+# Created by: Kate Galvin
+
+# User Audience: Readers who want a fun way to log their read books.
+
+# Technology Highlights:
+
+- Users can search for books on the Book Search page.
+- Books can be added/removed to the user's book log using the ✓/x icon overlay on the top right of each book cover.
+- Book descriptions can be viewed by pressing on a book cover. This will open a popup which can be exited by pressing on a part of the page that isn't covered by the popup.
+- Logged books are displayed on the Logged Books page.
+- Logged books can be sorted by date logged, date released, rating, and length.
+- Featured author books are displayed on the home page.
+
+# Implementation Specifics.
+
+- Book search is powered by the Google Books API.
+- Logged book data is stored in a Firebase collection for the user.
+- Featured author is powered by the Google Books API.
+- React routing is used to create four main pages.
+- Firebase authentication is used for user login.
+
+# Credit:
+
+- Concept, design, and title inspired by Letterboxd.
+- Book Data from Google Books API.
+- Logo from Canva.
