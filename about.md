@@ -17,13 +17,15 @@
 - Logged books can be sorted by date logged, date released, rating, and length.
 - Featured author books are displayed on the home page.
 
-### Implementation Specifics.
+### Implementation Specifics:
 
 - Book search is powered by the Google Books API.
 - Logged book data is stored in a Firebase collection for the user.
 - Featured author is powered by the Google Books API.
 - React routing is used to create four main pages.
 - Firebase authentication is used for user login.
+
+### Demo:
 
 ### Credit:
 
