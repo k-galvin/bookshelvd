@@ -1,14 +1,14 @@
-# Bookshelvd
+# Bookshelvd: 
 
 **_A Letterboxd Inspired Book Log_**
 
-# Deployed at:
+### Deployed at:
 
-# Created by: Kate Galvin
+### Created by: Kate Galvin
 
-# User Audience: Readers who want a fun way to log their read books.
+### User Audience: Readers who want a fun way to log their read books.
 
-# Technology Highlights:
+### App Highlights:
 
 - Users can search for books on the Book Search page.
 - Books can be added/removed to the user's book log using the ✓/x icon overlay on the top right of each book cover.
@@ -17,7 +17,7 @@
 - Logged books can be sorted by date logged, date released, rating, and length.
 - Featured author books are displayed on the home page.
 
-# Implementation Specifics.
+### Implementation Specifics.
 
 - Book search is powered by the Google Books API.
 - Logged book data is stored in a Firebase collection for the user.
@@ -25,7 +25,7 @@
 - React routing is used to create four main pages.
 - Firebase authentication is used for user login.
 
-# Credit:
+### Credit:
 
 - Concept, design, and title inspired by Letterboxd.
 - Book Data from Google Books API.
