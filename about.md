@@ -2,7 +2,7 @@
 
 **_A Letterboxd Inspired Book Log_**
 
-### Deployed at:
+### Deployed at: https://bookshelved-c5988.web.app/
 
 ### Created by: Kate Galvin
 
