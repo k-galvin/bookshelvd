@@ -7,11 +7,13 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
   const [query, setQuery] = useState('')
   const [queriedBooks, setQueriedBooks] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     const handleSearch = async () => {
       try {
         if (query.trim() !== '') {
+          setError('')
           setLoading(true)
           const response = await searchBooks(query)
           setQueriedBooks(response)
@@ -19,7 +21,8 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
           // If the query is empty, set the queried books to an empty array
           setQueriedBooks([])
         }
-      } catch {
+      } catch (error) {
+        setError(error)
         setQueriedBooks([])
       } finally {
         setLoading(false)
@@ -45,7 +48,9 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
         placeholder="Search for books..."
       />
 
-      {loading ? (
+      {error ? (
+        <div className="books-grid-container search">Error: {error.message}</div>
+      ) : loading ? (
         <div className="books-grid-container search">Loading...</div>
       ) : (
         // Display at most 10 books that match the query

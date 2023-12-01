@@ -12,6 +12,7 @@ const searchBooks = async query => {
     return data.items
   } catch (error) {
     console.error('Error searching books:', error)
+    throw error
   }
 }
 
