@@ -3,7 +3,7 @@ import { getSortedBooks } from '../services/bookService'
 import LoggedBookGrid from './LoggedBookGrid'
 import LoginPage from './LoginPage'
 
-export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) {
+export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, loading }) {
   const [sortOption, setSortOption] = useState('newestToOldestLogged')
 
   if (!user) {
@@ -63,6 +63,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
               deleteBook={deleteBook}
               user={user}
               loggedBooks={loggedBooks}
+              loading={loading}
             />
           )}
 
@@ -73,6 +74,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
               deleteBook={deleteBook}
               user={user}
               loggedBooks={loggedBooks}
+              loading={loading}
             />
           )}
 
@@ -83,6 +85,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
               deleteBook={deleteBook}
               user={user}
               loggedBooks={loggedBooks}
+              loading={loading}
             />
           )}
         </div>
@@ -100,6 +103,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
             deleteBook={deleteBook}
             user={user}
             loggedBooks={loggedBooks}
+            loading={loading}
           />
         </div>
       )}
@@ -114,6 +118,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks }) 
             deleteBook={deleteBook}
             user={user}
             loggedBooks={loggedBooks}
+            loading={loading}
           />
         </div>
       )}

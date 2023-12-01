@@ -12,12 +12,26 @@ import Home from './Home'
 
 function App() {
   const [loggedBooks, setLoggedBooks] = useState([])
+  const [loading, setLoading] = useState(false)
   const user = useAuthentication()
 
   // Fetch all logged books from firebase
   useEffect(() => {
+    async function fetchData() {
+      try {
+        const books = await fetchLoggedBooks(user.uid)
+        setLoggedBooks(books)
+      } catch (error) {
+        console.error('Error fetching books:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    setLoading(true)
+
     if (user) {
-      fetchLoggedBooks(user.uid).then(setLoggedBooks)
+      fetchData()
     }
   }, [user, loggedBooks.length])
 
@@ -60,7 +74,15 @@ function App() {
             />
             <Route
               path="/book-log"
-              element={<BookLogPage user={user} addBook={addBook} deleteBook={deleteBook} loggedBooks={loggedBooks} />}
+              element={
+                <BookLogPage
+                  user={user}
+                  addBook={addBook}
+                  deleteBook={deleteBook}
+                  loggedBooks={loggedBooks}
+                  loading={loading}
+                />
+              }
             />
           </Routes>
         </div>
