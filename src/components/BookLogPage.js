@@ -4,8 +4,10 @@ import LoggedBookGrid from './LoggedBookGrid'
 import LoginPage from './LoginPage'
 
 export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, loading }) {
+  // Initialize sorting to newest logged first
   const [sortOption, setSortOption] = useState('newestToOldestLogged')
 
+  // If not logged in, display login page
   if (!user) {
     return <LoginPage />
   }
@@ -19,6 +21,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
 
   return (
     <div className="book-log-page">
+      {/* Header containing page title and sorting select */}
       <div className="book-log-header">
         <h2 className="book-log-title">Logged Books</h2>
 
@@ -55,6 +58,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
 
       {/* Display sorted logged books */}
       <div>
+        {/* Display loading spinner while books are rendering */}
         {loading && (
           <div className="spinner-container">
             <div className="spinner"></div>

@@ -1,9 +1,10 @@
 import Book from './Book'
 
-export default function LoggedBookGrid({ books, addBook, deleteBook, user, loggedBooks, loading }) {
+export default function LoggedBookGrid({ books, addBook, deleteBook, user, loggedBooks }) {
   return (
     <div>
       <div>
+        {/* If logged books are available, display them in a grid of small size books */}
         {books ? (
           <div className="books-container">
             {books.map(book => (

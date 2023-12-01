@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;700&family=Neucha&display=swap');
 
+/* App-wide styling  */
 body {
   height: 100%;
   background-image: linear-gradient(#182834, #14191d);
@@ -9,7 +10,6 @@ body {
   overflow: scroll;
 }
 
-/* App  */
 .app-container {
   display: grid;
   grid-template-rows: 10% 90%;
@@ -237,6 +237,10 @@ header {
   }
 }
 
+.error {
+  color: red;
+}
+
 /* Login Page */
 .login-page {
   height: 100vh;
@@ -325,8 +329,4 @@ header {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-}
-
-.error {
-  color: red;
 }

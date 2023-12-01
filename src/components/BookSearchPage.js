@@ -9,6 +9,7 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  // Get ten books based on the user's query, with results on every keystroke
   useEffect(() => {
     const handleSearch = async () => {
       try {
@@ -18,7 +19,7 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
           const response = await searchBooks(query)
           setQueriedBooks(response)
         } else {
-          // If the query is empty, set the queried books to an empty array
+          // Set queried books to an empty array if query is empty
           setQueriedBooks([])
         }
       } catch (error) {
@@ -32,6 +33,7 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
     handleSearch()
   }, [query])
 
+  // If not logged in, display login page
   if (!user) {
     return <LoginPage />
   }
@@ -48,12 +50,14 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
         placeholder="Search for books..."
       />
 
+      {/* Display loading spinner while fetching books based on query */}
       {loading && (
         <div className="spinner-container">
           <div className="spinner"></div>
         </div>
       )}
 
+      {/* Display error message if books can't be fetched */}
       {error ? (
         <div className="books-grid-container search error">Error: {error.message}</div>
       ) : (
