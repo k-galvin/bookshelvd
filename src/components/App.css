@@ -41,6 +41,10 @@ header {
   padding-left: 5.5em;
 }
 
+.header-link.log-in {
+  padding-right: 6.5em;
+}
+
 .logo-image {
   max-height: 4em;
 }
@@ -49,7 +53,6 @@ header {
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding-right: 6.5em;
 }
 
 .username {
@@ -209,6 +212,9 @@ header {
 .books-grid-container.search {
   grid-row: 3;
 }
+.books-grid-container.error {
+  color: red;
+}
 
 /* Home Page */
 .home-page {
@@ -269,6 +275,10 @@ header {
   overflow: auto;
 }
 
+.popup-content.error {
+  color: red;
+}
+
 .book-title {
   font-weight: bold;
   padding: 1em;
@@ -315,4 +325,8 @@ header {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+}
+
+.error {
+  color: red;
 }

@@ -55,7 +55,7 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
       )}
 
       {error ? (
-        <div className="books-grid-container search">Error: {error.message}</div>
+        <div className="books-grid-container search error">Error: {error.message}</div>
       ) : (
         // Display at most 10 books that match the query
         <div className="books-grid-container search">

@@ -1,4 +1,4 @@
-# Bookshelvd: 
+# Bookshelvd:
 
 **_A Letterboxd Inspired Book Log_**
 
@@ -26,6 +26,8 @@
 - Firebase authentication is used for user login.
 
 ### Demo:
+
+- View a video demo [here] (https://drive.google.com/file/d/1yvzAa-h9nfzorjxQR0yLRi2NN79sdzeT/view?usp=sharing)
 
 ### Credit:
 

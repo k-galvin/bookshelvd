@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { searchBooks } from '../services/apiService'
 import LoginPage from './LoginPage'
 import AuthorList from './AuthorList'
@@ -16,6 +16,7 @@ export default function Home({ user, addBook, deleteBook, loggedBooks }) {
   const [selectedAuthor, setSelectedAuthor] = useState('')
   const [authorBooks, setAuthorBooks] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   const getRandomAuthor = () => {
     const randomIndex = Math.floor(Math.random() * authors.length)
@@ -28,6 +29,7 @@ export default function Home({ user, addBook, deleteBook, loggedBooks }) {
       const books = await searchBooks(query)
       setAuthorBooks(books)
     } catch (error) {
+      setError(error)
       setAuthorBooks([])
     } finally {
       setLoading(false)
@@ -54,7 +56,9 @@ export default function Home({ user, addBook, deleteBook, loggedBooks }) {
     <div className="home-page">
       <h2>Featured Author: {selectedAuthor}</h2>
 
-      {loading ? (
+      {error ? (
+        <div className="error">Error Displaying: {error.message}</div>
+      ) : loading ? (
         <div className="spinner-container">
           <div className="spinner"></div>
         </div>
