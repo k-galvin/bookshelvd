@@ -54,74 +54,82 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
       </div>
 
       {/* Display sorted logged books */}
-      {sortedBooks.length !== 0 ? (
-        <div className="books-grid-container">
-          {sortOption.includes('Rating') && (
+      <div>
+        {loading && (
+          <div className="spinner-container">
+            <div className="spinner"></div>
+          </div>
+        )}
+
+        {sortedBooks.length !== 0 ? (
+          <div className="books-grid-container">
+            {sortOption.includes('Rating') && (
+              <LoggedBookGrid
+                books={ratedBooks}
+                addBook={addBook}
+                deleteBook={deleteBook}
+                user={user}
+                loggedBooks={loggedBooks}
+                loading={loading}
+              />
+            )}
+
+            {sortOption.includes('Length') && (
+              <LoggedBookGrid
+                books={pageCountBooks}
+                addBook={addBook}
+                deleteBook={deleteBook}
+                user={user}
+                loggedBooks={loggedBooks}
+                loading={loading}
+              />
+            )}
+
+            {!sortOption.includes('Rating') && !sortOption.includes('Length') && (
+              <LoggedBookGrid
+                books={sortedBooks}
+                addBook={addBook}
+                deleteBook={deleteBook}
+                user={user}
+                loggedBooks={loggedBooks}
+                loading={loading}
+              />
+            )}
+          </div>
+        ) : (
+          <div className="books-grid-container">No Logged Books</div>
+        )}
+
+        {/* Unrated books displayed here if sorting by rating */}
+        {unratedBooks.length > 0 && sortOption.includes('Rating') && (
+          <div className="missing-info-books-grid-container">
+            <h2>Unrated Books</h2>
             <LoggedBookGrid
-              books={ratedBooks}
+              books={unratedBooks}
               addBook={addBook}
               deleteBook={deleteBook}
               user={user}
               loggedBooks={loggedBooks}
               loading={loading}
             />
-          )}
+          </div>
+        )}
 
-          {sortOption.includes('Length') && (
+        {/* No page count books displayed here if sorting by length */}
+        {noPageCountBooks.length > 0 && sortOption.includes('Length') && (
+          <div className="missing-info-books-grid-container">
+            <h2>No Page Count Available</h2>
             <LoggedBookGrid
-              books={pageCountBooks}
+              books={noPageCountBooks}
               addBook={addBook}
               deleteBook={deleteBook}
               user={user}
               loggedBooks={loggedBooks}
               loading={loading}
             />
-          )}
-
-          {!sortOption.includes('Rating') && !sortOption.includes('Length') && (
-            <LoggedBookGrid
-              books={sortedBooks}
-              addBook={addBook}
-              deleteBook={deleteBook}
-              user={user}
-              loggedBooks={loggedBooks}
-              loading={loading}
-            />
-          )}
-        </div>
-      ) : (
-        <div className="books-grid-container">No Logged Books</div>
-      )}
-
-      {/* Unrated books displayed here if sorting by rating */}
-      {unratedBooks.length > 0 && sortOption.includes('Rating') && (
-        <div className="missing-info-books-grid-container">
-          <h2>Unrated Books</h2>
-          <LoggedBookGrid
-            books={unratedBooks}
-            addBook={addBook}
-            deleteBook={deleteBook}
-            user={user}
-            loggedBooks={loggedBooks}
-            loading={loading}
-          />
-        </div>
-      )}
-
-      {/* No page count books displayed here if sorting by length */}
-      {noPageCountBooks.length > 0 && sortOption.includes('Length') && (
-        <div className="missing-info-books-grid-container">
-          <h2>No Page Count Available</h2>
-          <LoggedBookGrid
-            books={noPageCountBooks}
-            addBook={addBook}
-            deleteBook={deleteBook}
-            user={user}
-            loggedBooks={loggedBooks}
-            loading={loading}
-          />
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

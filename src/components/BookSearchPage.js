@@ -48,10 +48,14 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
         placeholder="Search for books..."
       />
 
+      {loading && (
+        <div className="spinner-container">
+          <div className="spinner"></div>
+        </div>
+      )}
+
       {error ? (
         <div className="books-grid-container search">Error: {error.message}</div>
-      ) : loading ? (
-        <div className="books-grid-container search">Loading...</div>
       ) : (
         // Display at most 10 books that match the query
         <div className="books-grid-container search">

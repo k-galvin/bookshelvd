@@ -55,7 +55,9 @@ export default function Home({ user, addBook, deleteBook, loggedBooks }) {
       <h2>Featured Author: {selectedAuthor}</h2>
 
       {loading ? (
-        'Loading...'
+        <div className="spinner-container">
+          <div className="spinner"></div>
+        </div>
       ) : (
         <AuthorList
           authorBooks={authorBooks}
