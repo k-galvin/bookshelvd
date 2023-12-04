@@ -6,22 +6,18 @@ import LoginPage from './LoginPage'
 export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks }) {
   const [query, setQuery] = useState('')
   const [queriedBooks, setQueriedBooks] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // Get ten books based on the user's query, with results on every keystroke
+  // Get ten books based on the user's query, with results every 300ms
   useEffect(() => {
+    let timeoutId
+
     const handleSearch = async () => {
       try {
-        if (query.trim() !== '') {
-          setError('')
-          setLoading(true)
-          const response = await searchBooks(query)
-          setQueriedBooks(response)
-        } else {
-          // Set queried books to an empty array if query is empty
-          setQueriedBooks([])
-        }
+        setError('')
+        const response = await searchBooks(query)
+        setQueriedBooks(response)
       } catch (error) {
         setError(error)
         setQueriedBooks([])
@@ -30,12 +26,26 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
       }
     }
 
-    handleSearch()
+    // Delay the execution of handleSearch
+    timeoutId = setTimeout(() => {
+      handleSearch()
+    }, 300)
+
+    // Clear the timeout
+    return () => {
+      clearTimeout(timeoutId)
+    }
   }, [query])
 
   // If not logged in, display login page
   if (!user) {
     return <LoginPage />
+  }
+
+  // Handle query input change
+  const handleInputChange = e => {
+    setQuery(e.target.value)
+    setLoading(true)
   }
 
   return (
@@ -44,9 +54,10 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
       {/* Search query input */}
       <input
         className="search-bar"
+        id="search-bar"
         type="text"
         value={query}
-        onChange={e => setQuery(e.target.value)}
+        onChange={handleInputChange}
         placeholder="Search for books..."
       />
 
@@ -63,7 +74,7 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
       ) : (
         // Display at most 10 books that match the query
         <div className="books-grid-container search">
-          {queriedBooks ? (
+          {queriedBooks.length !== 0 ? (
             <div className="books-container">
               {queriedBooks.map(book => (
                 <div key={book.id} className="small-book-container">
@@ -86,9 +97,7 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
                 </div>
               ))}
             </div>
-          ) : (
-            'No results'
-          )}
+          ) : null}
         </div>
       )}
     </div>

@@ -53,20 +53,27 @@ header {
   display: flex;
   align-items: center;
   cursor: pointer;
+  position: relative;
 }
 
 .username {
   padding-right: 0.3em;
+  margin-bottom: 0.3em;
 }
 
 .user-button {
   color: white;
-  background-color: #14191d;
+  background-color: teal;
   border: none;
   font-family: 'Montserrat', sans-serif;
   font-weight: bold;
   font-size: 1em;
   cursor: pointer;
+  padding: 0.5em;
+}
+
+.dropdown-content {
+  position: absolute;
 }
 
 /* Book Card */
