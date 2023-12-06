@@ -18,14 +18,18 @@ export default function Header({ user }) {
         {!logoLoaded && <div>Loading...</div>}
       </Link>
       <div className="header-right">
-        {/* Magnifying glass symbol that links to search page */}
-        <Link to="/book-search" className="header-link search">
-          <span className="material-symbols-outlined">search</span>
-        </Link>
-        {/* Link to logged books page */}
-        <Link to="/book-log" className="header-link books">
-          LOGGED BOOKS
-        </Link>
+        {user && (
+          // Magnifying glass symbol that links to search page
+          <Link to="/book-search" className="header-link search">
+            <span className="material-symbols-outlined">search</span>
+          </Link>
+        )}
+        {user && (
+          // Link to logged books page
+          <Link to="/book-log" className="header-link books">
+            LOGGED BOOKS
+          </Link>
+        )}
         {/* Login/Logout button */}
         <div className="header-link log-in">{!user ? <SignIn /> : <SignOut />}</div>
       </div>
