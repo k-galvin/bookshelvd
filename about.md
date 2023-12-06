@@ -27,8 +27,8 @@
 
 ### Demo:
 
-- View a video demo [here] (https://drive.google.com/file/d/1yvzAa-h9nfzorjxQR0yLRi2NN79sdzeT/view?usp=sharing)
-- View presentation slides [here] (https://docs.google.com/presentation/d/1HuVz1r16-ycp5geUMg6Az_G9tykiMQPjMqw0vyO_rQg/edit?usp=sharing)
+- View a video demo [here](https://drive.google.com/file/d/1yvzAa-h9nfzorjxQR0yLRi2NN79sdzeT/view?usp=sharing)
+- View presentation slides [here](https://docs.google.com/presentation/d/1HuVz1r16-ycp5geUMg6Az_G9tykiMQPjMqw0vyO_rQg/edit?usp=sharing)
 
 ### Credit:
 
