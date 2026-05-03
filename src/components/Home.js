@@ -3,7 +3,7 @@ import { searchBooks } from '../services/apiService'
 import LoginPage from './LoginPage'
 import AuthorList from './AuthorList'
 
-export default function Home({ user, addBook, deleteBook, loggedBooks }) {
+export default function Home({ user, addBook, deleteBook, loggedBooks, addToWatchlist }) {
   const [selectedAuthor, setSelectedAuthor] = useState('')
   const [authorBooks, setAuthorBooks] = useState([])
   const [loading, setLoading] = useState(true)
@@ -26,15 +26,7 @@ export default function Home({ user, addBook, deleteBook, loggedBooks }) {
   // Choose a random author from a list
   useEffect(() => {
     // List of featured authors
-    const authors = [
-      'Joan Didion',
-      'Lucy Foley',
-      'Taylor Jenkins Reid',
-      'Stephanie Garber',
-      'Christelle Dabos',
-      'Leigh Bardugo',
-      'Marissa Meyer'
-    ]
+    const authors = ['Joan Didion', 'Eve Babitz', 'Deborah Levy', 'Patti Smith', 'Rachel Cusk', 'Sally Rooney']
 
     // Select a random author from the list
     const getRandomAuthor = () => {
@@ -79,6 +71,7 @@ export default function Home({ user, addBook, deleteBook, loggedBooks }) {
           addBook={addBook}
           deleteBook={deleteBook}
           user={user}
+          addToWatchlist={addToWatchlist}
         />
       )}
     </div>

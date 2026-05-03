@@ -1,25 +1,31 @@
 // This service completely hides the data store from the rest of the app.
 
 import { db } from '../firebaseConfig'
-import { collection, query, getDocs, addDoc, doc, where, deleteDoc, Timestamp } from 'firebase/firestore'
+import { collection, query, getDocs, addDoc, doc, where, deleteDoc, updateDoc, Timestamp } from 'firebase/firestore'
 
 // Add a read book to the firestore
-export async function logBook(user, book) {
+export async function logBook(user, book, logDetails = {}) {
   const userId = user.uid
 
   // Fields to be stored for each book in firebase
   let bookData = {
-    title: book.volumeInfo.title,
-    volumeId: book.id,
+    title: book.volumeInfo?.title || book.title,
+    volumeId: book.id || book.volumeId,
     thumbnail:
-      book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : '',
-    authors: book.volumeInfo.authors ? book.volumeInfo.authors : '',
-    publishedDate: book.volumeInfo.publishedDate ? book.volumeInfo.publishedDate : '',
-    description: book.volumeInfo.description ? book.volumeInfo.description : '',
-    pageCount: book.volumeInfo.pageCount ? book.volumeInfo.pageCount : '',
-    averageRating: book.volumeInfo.averageRating ? book.volumeInfo.averageRating : '',
-    categories: book.volumeInfo.categories ? book.volumeInfo.categories : '',
-    dateLogged: Timestamp.now()
+      book.volumeInfo?.imageLinks?.thumbnail || book.thumbnail || '',
+    authors: book.volumeInfo?.authors || book.authors || [],
+    publishedDate: book.volumeInfo?.publishedDate || book.publishedDate || '',
+    description: book.volumeInfo?.description || book.description || '',
+    pageCount: book.volumeInfo?.pageCount || book.pageCount || '',
+    averageRating: book.volumeInfo?.averageRating || book.averageRating || '',
+    categories: book.volumeInfo?.categories || book.categories || [],
+    
+    // User specific data
+    userRating: logDetails.rating || 0,
+    userReview: logDetails.review || '',
+    dateRead: logDetails.dateRead || Timestamp.now(),
+    isLiked: logDetails.isLiked || false,
+    createdAt: Timestamp.now()
   }
 
   const userRef = doc(db, 'users', userId)
@@ -27,18 +33,30 @@ export async function logBook(user, book) {
 
   try {
     // Check if book has already been logged
-    const existingBookQuery = query(loggedBooksCollectionRef, where('volumeId', '==', book.id))
+    const existingBookQuery = query(loggedBooksCollectionRef, where('volumeId', '==', bookData.volumeId))
     const existingBookSnapshot = await getDocs(existingBookQuery)
 
-    // If book has already been logged, won't log it again
     if (!existingBookSnapshot.empty) {
+      // For simplicity, we just return if already logged
       return
     }
 
     const loggedBookRef = await addDoc(loggedBooksCollectionRef, bookData)
-    return { userId, bookId: loggedBookRef.id, ...bookData }
+    return { id: loggedBookRef.id, ...bookData }
   } catch (error) {
     console.error('Error logging book:', error.message)
+    throw error
+  }
+}
+
+// Update an existing log
+export async function updateLoggedBook(user, logId, updates) {
+  try {
+    const userRef = doc(db, 'users', user.uid)
+    const loggedBookRef = doc(userRef, 'loggedBooks', logId)
+    await updateDoc(loggedBookRef, updates)
+  } catch (error) {
+    console.error('Error updating book log:', error.message)
     throw error
   }
 }
@@ -58,7 +76,6 @@ export async function removeLoggedBook(user, id) {
 // Fetch logged books from firebase
 export async function fetchLoggedBooks(userId) {
   try {
-    // Fetch all the books in the user's read books log
     const userRef = doc(db, 'users', userId)
     const snapshot = await getDocs(collection(userRef, 'loggedBooks'))
     return snapshot.docs.map(doc => ({
@@ -66,6 +83,60 @@ export async function fetchLoggedBooks(userId) {
       ...doc.data()
     }))
   } catch (error) {
+    throw error
+  }
+}
+
+// Watchlist functions
+export async function addToWatchlist(user, book) {
+  const userId = user.uid
+  const bookData = {
+    title: book.volumeInfo?.title || book.title,
+    volumeId: book.id || book.volumeId,
+    thumbnail: book.volumeInfo?.imageLinks?.thumbnail || book.thumbnail || '',
+    authors: book.volumeInfo?.authors || book.authors || [],
+    createdAt: Timestamp.now()
+  }
+
+  const userRef = doc(db, 'users', userId)
+  const watchlistRef = collection(userRef, 'watchlist')
+
+  try {
+    const existingQuery = query(watchlistRef, where('volumeId', '==', bookData.volumeId))
+    const snapshot = await getDocs(existingQuery)
+    if (!snapshot.empty) return
+
+    await addDoc(watchlistRef, bookData)
+  } catch (error) {
+    console.error('Error adding to watchlist:', error)
+    throw error
+  }
+}
+
+export async function removeFromWatchlist(user, volumeId) {
+  try {
+    const userRef = doc(db, 'users', user.uid)
+    const watchlistRef = collection(userRef, 'watchlist')
+    const q = query(watchlistRef, where('volumeId', '==', volumeId))
+    const snapshot = await getDocs(q)
+    const deletePromises = snapshot.docs.map(d => deleteDoc(doc(watchlistRef, d.id)))
+    await Promise.all(deletePromises)
+  } catch (error) {
+    console.error('Error removing from watchlist:', error)
+    throw error
+  }
+}
+
+export async function fetchWatchlist(userId) {
+  try {
+    const userRef = doc(db, 'users', userId)
+    const snapshot = await getDocs(collection(userRef, 'watchlist'))
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+  } catch (error) {
+    console.error('Error fetching watchlist:', error)
     throw error
   }
 }
@@ -80,13 +151,13 @@ export function getSortedBooks(loggedBooks, sortOption) {
       case 'newestToOldestRelease':
         return new Date(b.publishedDate) - new Date(a.publishedDate)
       case 'highestToLowestRating':
-        return b.averageRating - a.averageRating
+        return (b.userRating || b.averageRating) - (a.userRating || a.averageRating)
       case 'lowestToHighestRating':
-        return a.averageRating - b.averageRating
+        return (a.userRating || a.averageRating) - (b.userRating || b.averageRating)
       case 'oldestToNewestLogged':
-        return a.dateLogged - b.dateLogged
+        return (a.dateRead?.seconds || a.createdAt?.seconds) - (b.dateRead?.seconds || b.createdAt?.seconds)
       case 'newestToOldestLogged':
-        return b.dateLogged - a.dateLogged
+        return (b.dateRead?.seconds || b.createdAt?.seconds) - (a.dateRead?.seconds || a.createdAt?.seconds)
       case 'shortestToLongestLength':
         return a.pageCount - b.pageCount
       case 'longestToShortestLength':

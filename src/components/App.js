@@ -7,8 +7,10 @@ import { useState, useEffect } from 'react'
 
 import BookSearchPage from './BookSearchPage'
 import BookLogPage from './BookLogPage'
+import WatchlistPage from './WatchlistPage'
 import Header from './Header'
 import Home from './Home'
+import { addToWatchlist, removeFromWatchlist } from '../services/bookService'
 
 function App() {
   const [loggedBooks, setLoggedBooks] = useState([])
@@ -49,13 +51,25 @@ function App() {
   }
 
   // Handling function for adding a book to firestore
-  const addBook = async (user, book) => {
+  const addBook = async (user, book, logDetails = {}) => {
     try {
-      await logBook(user, book)
-      // Update logged books
-      setLoggedBooks(prevBooks => [...prevBooks, book])
+      const loggedBook = await logBook(user, book, logDetails)
+      if (loggedBook) {
+        // Update logged books
+        setLoggedBooks(prevBooks => [...prevBooks, loggedBook])
+        // If it was in watchlist, remove it
+        await removeFromWatchlist(user, book.id || book.volumeId)
+      }
     } catch (error) {
       setError('Error adding book: ' + error.message)
+    }
+  }
+
+  const handleAddToWatchlist = async (user, book) => {
+    try {
+      await addToWatchlist(user, book)
+    } catch (error) {
+      setError('Error adding to watchlist: ' + error.message)
     }
   }
 
@@ -82,13 +96,27 @@ function App() {
             {/* Home page */}
             <Route
               path="/"
-              element={<Home user={user} addBook={addBook} deleteBook={deleteBook} loggedBooks={loggedBooks} />}
+              element={
+                <Home 
+                  user={user} 
+                  addBook={addBook} 
+                  deleteBook={deleteBook} 
+                  loggedBooks={loggedBooks} 
+                  addToWatchlist={handleAddToWatchlist}
+                />
+              }
             />
             {/* Book search page */}
             <Route
               path="/book-search"
               element={
-                <BookSearchPage user={user} addBook={addBook} deleteBook={deleteBook} loggedBooks={loggedBooks} />
+                <BookSearchPage 
+                  user={user} 
+                  addBook={addBook} 
+                  deleteBook={deleteBook} 
+                  loggedBooks={loggedBooks} 
+                  addToWatchlist={handleAddToWatchlist}
+                />
               }
             />
             {/* Book Log Page */}
@@ -101,6 +129,18 @@ function App() {
                   deleteBook={deleteBook}
                   loggedBooks={loggedBooks}
                   loading={loading}
+                />
+              }
+            />
+            {/* Watchlist Page */}
+            <Route
+              path="/watchlist"
+              element={
+                <WatchlistPage
+                  user={user}
+                  addBook={addBook}
+                  deleteBook={deleteBook}
+                  loggedBooks={loggedBooks}
                 />
               }
             />

@@ -3,7 +3,7 @@ import { searchBooks } from '../services/apiService'
 import Book from './Book'
 import LoginPage from './LoginPage'
 
-export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks }) {
+export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks, addToWatchlist }) {
   const [query, setQuery] = useState('')
   const [queriedBooks, setQueriedBooks] = useState([])
   const [loading, setLoading] = useState(false)
@@ -77,7 +77,7 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
           {queriedBooks.length !== 0 ? (
             <div className="books-container">
               {queriedBooks.map(book => (
-                <div key={book.id} className="small-book-container">
+                <div key={book.id}>
                   <Book
                     book={book}
                     cover={
@@ -89,6 +89,7 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks 
                     addBook={addBook}
                     deleteBook={deleteBook}
                     user={user}
+                    addToWatchlist={addToWatchlist}
                     title={book.volumeInfo.title}
                     authors={book.volumeInfo.authors}
                     description={book.volumeInfo.description}

@@ -3,7 +3,7 @@ import { getSortedBooks } from '../services/bookService'
 import LoggedBookGrid from './LoggedBookGrid'
 import LoginPage from './LoginPage'
 
-export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, loading }) {
+export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, loading, addToWatchlist }) {
   // Initialize sorting to newest logged first
   const [sortOption, setSortOption] = useState('newestToOldestLogged')
 
@@ -75,6 +75,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
                 user={user}
                 loggedBooks={loggedBooks}
                 loading={loading}
+                addToWatchlist={addToWatchlist}
               />
             )}
 
@@ -86,6 +87,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
                 user={user}
                 loggedBooks={loggedBooks}
                 loading={loading}
+                addToWatchlist={addToWatchlist}
               />
             )}
 
@@ -97,6 +99,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
                 user={user}
                 loggedBooks={loggedBooks}
                 loading={loading}
+                addToWatchlist={addToWatchlist}
               />
             )}
           </div>
@@ -115,6 +118,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
               user={user}
               loggedBooks={loggedBooks}
               loading={loading}
+              addToWatchlist={addToWatchlist}
             />
           </div>
         )}
@@ -130,6 +134,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
               user={user}
               loggedBooks={loggedBooks}
               loading={loading}
+              addToWatchlist={addToWatchlist}
             />
           </div>
         )}
