@@ -7,27 +7,28 @@ import { useState, useEffect } from 'react'
 
 import BookSearchPage from './BookSearchPage'
 import BookLogPage from './BookLogPage'
-import WatchlistPage from './WatchlistPage'
+import TBRPage from './TBRPage'
+import BookDetailPage from './BookDetailPage'
 import Header from './Header'
 import Home from './Home'
 
 function App() {
   const [loggedBooks, setLoggedBooks] = useState([])
-  const [watchlist, setWatchlist] = useState([])
+  const [tbr, setTBR] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const user = useAuthentication()
 
-  // Fetch all logged book data and watchlist from firebase
+  // Fetch all logged book data and tbr from firebase
   useEffect(() => {
     async function fetchData() {
       try {
-        const [books, watchlistBooks] = await Promise.all([
+        const [books, tbrBooks] = await Promise.all([
           fetchLoggedBooks(user.uid),
           fetchWatchlist(user.uid)
         ])
         setLoggedBooks(books)
-        setWatchlist(watchlistBooks)
+        setTBR(tbrBooks)
       } catch (error) {
         setError('Error fetching data: ' + error)
       } finally {
@@ -59,32 +60,32 @@ function App() {
       if (loggedBook) {
         // Update logged books
         setLoggedBooks(prevBooks => [...prevBooks, loggedBook])
-        // If it was in watchlist, remove it
+        // If it was in tbr, remove it
         const volumeId = book.id || book.volumeId
         await removeFromWatchlist(user, volumeId)
-        setWatchlist(prev => prev.filter(b => b.volumeId !== volumeId))
+        setTBR(prev => prev.filter(b => b.volumeId !== volumeId))
       }
     } catch (error) {
       setError('Error adding book: ' + error.message)
     }
   }
 
-  const handleAddToWatchlist = async (user, book) => {
+  const handleAddToTBR = async (user, book) => {
     try {
       const volumeId = book.id || book.volumeId
-      const isInWatchlist = watchlist.some(b => b.volumeId === volumeId)
+      const isInTBR = tbr.some(b => b.volumeId === volumeId)
       
-      if (isInWatchlist) {
+      if (isInTBR) {
         await removeFromWatchlist(user, volumeId)
-        setWatchlist(prev => prev.filter(b => b.volumeId !== volumeId))
+        setTBR(prev => prev.filter(b => b.volumeId !== volumeId))
       } else {
         await addToWatchlist(user, book)
-        // Refresh watchlist to get the new list with IDs
-        const updatedWatchlist = await fetchWatchlist(user.uid)
-        setWatchlist(updatedWatchlist)
+        // Refresh tbr to get the new list with IDs
+        const updatedTBR = await fetchWatchlist(user.uid)
+        setTBR(updatedTBR)
       }
     } catch (error) {
-      setError('Error updating watchlist: ' + error.message)
+      setError('Error updating TBR: ' + error.message)
     }
   }
 
@@ -117,8 +118,8 @@ function App() {
                   addBook={addBook} 
                   deleteBook={deleteBook} 
                   loggedBooks={loggedBooks} 
-                  watchlist={watchlist}
-                  addToWatchlist={handleAddToWatchlist}
+                  tbr={tbr}
+                  addToTBR={handleAddToTBR}
                 />
               }
             />
@@ -131,8 +132,8 @@ function App() {
                   addBook={addBook} 
                   deleteBook={deleteBook} 
                   loggedBooks={loggedBooks} 
-                  watchlist={watchlist}
-                  addToWatchlist={handleAddToWatchlist}
+                  tbr={tbr}
+                  addToTBR={handleAddToTBR}
                 />
               }
             />
@@ -145,22 +146,37 @@ function App() {
                   addBook={addBook}
                   deleteBook={deleteBook}
                   loggedBooks={loggedBooks}
-                  watchlist={watchlist}
+                  tbr={tbr}
                   loading={loading}
-                  addToWatchlist={handleAddToWatchlist}
+                  addToTBR={handleAddToTBR}
                 />
               }
             />
-            {/* Watchlist Page */}
+            {/* TBR Page */}
             <Route
-              path="/watchlist"
+              path="/tbr"
               element={
-                <WatchlistPage
+                <TBRPage
                   user={user}
                   addBook={addBook}
                   deleteBook={deleteBook}
                   loggedBooks={loggedBooks}
-                  watchlist={watchlist}
+                  tbr={tbr}
+                  handleAddToTBR={handleAddToTBR}
+                />
+              }
+            />
+            {/* Book Detail Page */}
+            <Route
+              path="/book/:id"
+              element={
+                <BookDetailPage
+                  user={user}
+                  addBook={addBook}
+                  deleteBook={deleteBook}
+                  loggedBooks={loggedBooks}
+                  tbr={tbr}
+                  addToTBR={handleAddToTBR}
                 />
               }
             />

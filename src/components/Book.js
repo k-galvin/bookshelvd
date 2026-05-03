@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react'
-import BookInfo from './BookInfo'
+import { useNavigate } from 'react-router-dom'
 import LogModal from './LogModal'
 
 export default function Book({
   book,
   loggedBooks,
-  watchlist,
+  tbr,
   addBook,
   deleteBook,
   user,
-  addToWatchlist,
+  addToTBR,
   cover,
   title,
   size,
@@ -17,19 +17,19 @@ export default function Book({
   description,
   averageRating
 }) {
+  const navigate = useNavigate()
   const [isBookLogged, setIsBookLogged] = useState(false)
-  const [isInWatchlist, setIsInWatchlist] = useState(false)
-  const [displayInfo, setDisplayInfo] = useState(false)
+  const [isInTBR, setIsInTBR] = useState(false)
   const [showLogModal, setShowLogModal] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
   const [userRating, setUserRating] = useState(0)
 
-  // Update whether a book has been logged or is in watchlist
+  // Update whether a book has been logged or is in tbr
   useEffect(() => {
-    const volumeId = book.id || book.volumeId
+    const volumeId = book.volumeId || book.id
     
     if (loggedBooks) {
-      const loggedInstance = loggedBooks.find(lb => lb.volumeId === volumeId || lb.id === book.id);
+      const loggedInstance = loggedBooks.find(lb => lb.volumeId === volumeId);
       setIsBookLogged(!!loggedInstance)
       if (loggedInstance) {
         setIsLiked(loggedInstance.isLiked || false)
@@ -37,15 +37,16 @@ export default function Book({
       }
     }
 
-    if (watchlist) {
-      setIsInWatchlist(watchlist.some(b => b.volumeId === volumeId))
+    if (tbr) {
+      setIsInTBR(tbr.some(b => b.volumeId === volumeId))
     }
-  }, [loggedBooks, watchlist, book])
+  }, [loggedBooks, tbr, book])
 
   const handleEyeClick = (e) => {
     e.stopPropagation();
+    const volumeId = book.volumeId || book.id
     if (isBookLogged) {
-      const loggedInstance = loggedBooks.find(lb => lb.volumeId === (book.id || book.volumeId) || lb.id === book.id);
+      const loggedInstance = loggedBooks.find(lb => lb.volumeId === volumeId);
       if (loggedInstance) {
         deleteBook(user, loggedInstance)
       }
@@ -61,15 +62,20 @@ export default function Book({
 
   const handleLikeClick = (e) => {
     e.stopPropagation();
-    // In a full implementation, we would update the DB here
     setIsLiked(!isLiked);
   }
 
-  const handleWatchlistClick = (e) => {
+  const handleTBRClick = (e) => {
     e.stopPropagation();
-    if (addToWatchlist) {
-      addToWatchlist(user, book);
+    if (addToTBR) {
+      addToTBR(user, book);
     }
+  }
+
+  const handleCoverClick = () => {
+    // Always prioritize volumeId (the Google ID) for navigation
+    const targetId = book.volumeId || book.id
+    navigate(`/book/${targetId}`)
   }
 
   // Determine if a book show be displayed in a large or small size
@@ -85,7 +91,7 @@ export default function Book({
 
   return (
     <div className={size === 'large' ? 'large-book-container' : 'small-book-container'}>
-      <div className="cover-container" style={sizeStyle} onClick={() => setDisplayInfo(true)}>
+      <div className="cover-container" style={sizeStyle} onClick={handleCoverClick}>
         <img
           src={cover || 'https://via.placeholder.com/150x225?text=No+Cover'}
           className="cover-img"
@@ -110,9 +116,9 @@ export default function Book({
               favorite
             </span>
             <span 
-              className={`action-btn material-symbols-outlined ${isInWatchlist ? 'active' : ''}`} 
-              onClick={handleWatchlistClick}
-              title={isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
+              className={`action-btn material-symbols-outlined ${isInTBR ? 'active' : ''}`} 
+              onClick={handleTBRClick}
+              title={isInTBR ? "Remove from TBR" : "Add to TBR"}
             >
               schedule
             </span>
@@ -129,17 +135,6 @@ export default function Book({
           ))}
           {isLiked && <span className="material-symbols-outlined small-heart-icon">favorite</span>}
         </div>
-      )}
-
-      {/* Popup of book info shown when book cover is clicked */}
-      {displayInfo && (
-        <BookInfo
-          setDisplayInfo={setDisplayInfo}
-          title={title}
-          authors={authors}
-          description={description}
-          averageRating={averageRating}
-        />
       )}
 
       {/* Log Modal */}

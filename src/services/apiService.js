@@ -25,13 +25,12 @@ const searchBooks = async query => {
   }
 
   // Check cache first
-  const cacheKey = encodeURIComponent(query.trim().toLowerCase());
+  const cacheKey = `search_${encodeURIComponent(query.trim().toLowerCase())}`;
   const cachedResult = getCachedData(cacheKey);
   if (cachedResult) {
     return cachedResult;
   }
 
-  // Try the .env key first, then fallback to Firebase key if needed
   const apiKey = process.env.REACT_APP_GOOGLE_BOOKS_API_KEY;
 
   try {
@@ -76,6 +75,43 @@ const searchBooks = async query => {
   }
 }
 
+// Fetch a specific book by its Google Books ID
+const fetchBookById = async bookId => {
+  if (!bookId) return null;
+
+  const cacheKey = `book_${bookId}`;
+  const cachedResult = getCachedData(cacheKey);
+  if (cachedResult) {
+    return cachedResult;
+  }
+
+  const apiKey = process.env.REACT_APP_GOOGLE_BOOKS_API_KEY;
+
+  try {
+    const params = new URLSearchParams({});
+    if (apiKey && apiKey !== 'undefined') {
+      params.append('key', apiKey);
+    }
+
+    let url = `https://www.googleapis.com/books/v1/volumes/${bookId}?${params.toString()}`
+    
+    const response = await fetch(url)
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('API Error:', errorData);
+      throw new Error(`Google Books API Error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    setCachedData(cacheKey, data);
+    return data;
+  } catch (error) {
+    console.error('fetchBookById error:', error);
+    throw error
+  }
+}
+
 const removeDuplicateBooks = books => {
   if (!Array.isArray(books) || books.length === 0) {
     return []
@@ -91,4 +127,4 @@ const removeDuplicateBooks = books => {
   })
 }
 
-export { searchBooks }
+export { searchBooks, fetchBookById }

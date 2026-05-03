@@ -107,10 +107,15 @@ header {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-/* Book Card */
+.large-book-container, .small-book-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .cover-container {
   position: relative;
-  display: inline-block;
+  display: block;
   overflow: hidden;
   border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -183,8 +188,8 @@ header {
   color: #ff3333;
 }
 
-.action-btn[title="Add to Watchlist"]:hover, 
-.action-btn.active[title="Remove from Watchlist"] {
+.action-btn[title="Add to TBR"]:hover, 
+.action-btn.active[title="Remove from TBR"] {
   color: var(--lb-blue);
 }
 
@@ -391,7 +396,7 @@ h2 {
 
 .book-rating-display {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 2px;
   margin-top: 5px;
@@ -403,7 +408,7 @@ h2 {
 }
 
 .small-star.filled {
-  color: var(--lb-green);
+  color: var(--text-muted);
 }
 
 .small-heart-icon {
@@ -503,4 +508,200 @@ h2 {
 .search-bar:focus {
   border-color: var(--lb-green);
   box-shadow: 0 0 8px rgba(0, 224, 84, 0.2);
+}
+
+/* Book Detail Page */
+.book-detail-page {
+  position: relative;
+  margin-top: -2em; /* Negate pages-container padding to let backdrop hit top */
+  padding-bottom: 5em;
+}
+
+.backdrop-container {
+  position: absolute;
+  top: -70px;
+  left: -5%;
+  right: -5%;
+  height: 500px;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.backdrop-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center 20%;
+  filter: blur(80px) opacity(0.3);
+  transform: scale(1.1);
+}
+
+.backdrop-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg-color) 90%);
+}
+
+.book-detail-content {
+  display: grid;
+  grid-template-columns: 250px 1fr 250px;
+  gap: 3em;
+  padding-top: 50px;
+}
+
+.large-cover-container img {
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.page-rating-container {
+  margin-top: 1em;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.page-rating .star {
+  font-size: 2em; /* Slightly larger on this page */
+  cursor: default; /* Not interactive here */
+}
+
+.page-rating .star.filled {
+  color: var(--text-muted);
+}
+
+
+.book-page-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5em;
+  margin: 0;
+  border: none;
+  padding: 0;
+  color: white;
+}
+
+.book-page-meta {
+  margin: 0.5em 0 2em 0;
+  font-size: 1.1em;
+}
+
+.release-year {
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-right: 15px;
+}
+
+.meta-separator {
+  color: #667788;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  margin-right: 15px;
+}
+
+.author-names {
+  color: var(--lb-blue);
+  font-weight: 700;
+}
+
+.book-page-description {
+  line-height: 1.6;
+  font-size: 1.1em;
+  color: #ccddee;
+  margin-bottom: 3em;
+}
+
+/* Sidebar Action Panel */
+.action-panel {
+  background-color: var(--panel-bg);
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-action {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 1em;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  letter-spacing: 0.1em;
+}
+
+.panel-action:hover {
+  background-color: #38424e;
+  color: white;
+}
+
+.panel-action.active {
+  color: var(--lb-green);
+}
+
+.panel-action.active-blue {
+  color: var(--lb-blue);
+}
+
+.panel-rating {
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-rating label {
+  font-size: 0.7em;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* User Review Section */
+.user-review-section {
+  border-top: 1px solid var(--border-color);
+  padding-top: 2em;
+}
+
+.user-review-section h3 {
+  font-size: 0.9em;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.user-rating-display {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 1em;
+}
+
+.user-review-text {
+  font-style: italic;
+  color: #ccddee;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .book-detail-content {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+  .detail-center {
+    order: 2;
+  }
+  .detail-right {
+    order: 3;
+    width: 100%;
+    max-width: 300px;
+  }
 }

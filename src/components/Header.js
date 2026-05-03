@@ -22,9 +22,9 @@ export default function Header({ user }) {
             <Link to="/book-log" className="header-link">
               BOOKS
             </Link>
-            {/* Link to watchlist page */}
-            <Link to="/watchlist" className="header-link">
-              WATCHLIST
+            {/* Link to tbr page */}
+            <Link to="/tbr" className="header-link">
+              TBR
             </Link>
           </>
         )}

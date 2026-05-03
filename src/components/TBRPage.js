@@ -1,28 +1,28 @@
 import Book from './Book'
 import LoginPage from './LoginPage'
 
-export default function WatchlistPage({ user, loggedBooks, watchlist, addBook, deleteBook, handleAddToWatchlist }) {
+export default function TBRPage({ user, loggedBooks, tbr, addBook, deleteBook, handleAddToTBR }) {
   if (!user) return <LoginPage />
 
   return (
     <div className="book-log-page">
       <div className="book-log-header">
-        <h2 className="book-log-title">YOU WANT TO READ...</h2>
+        <h2 className="book-log-title">YOUR TBR...</h2>
       </div>
 
-      {watchlist.length > 0 ? (
+      {tbr && tbr.length > 0 ? (
         <div className="books-container">
-          {watchlist.map(book => (
+          {tbr.map(book => (
             <div key={book.volumeId} className="small-book-container">
               <Book
                 book={{...book, id: book.volumeId}}
                 cover={book.thumbnail}
                 loggedBooks={loggedBooks}
-                watchlist={watchlist}
+                tbr={tbr}
                 addBook={addBook}
                 deleteBook={deleteBook}
                 user={user}
-                addToWatchlist={handleAddToWatchlist}
+                addToTBR={handleAddToTBR}
                 title={book.title}
                 authors={book.authors}
                 size="small"
@@ -31,7 +31,7 @@ export default function WatchlistPage({ user, loggedBooks, watchlist, addBook, d
           ))}
         </div>
       ) : (
-        <div className="books-grid-container">Your watchlist is empty.</div>
+        <div className="books-grid-container">Your TBR is empty.</div>
       )}
     </div>
   )
