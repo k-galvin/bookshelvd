@@ -1,19 +1,40 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { getSortedBooks } from '../services/bookService'
+import { fetchOriginalPublicationYear } from '../services/apiService'
 import LoggedBookGrid from './LoggedBookGrid'
 import LoginPage from './LoginPage'
 
 export default function BookLogPage({ user, deleteBook, addBook, updateBook, loggedBooks, tbr, loading, addToTBR }) {
   // Initialize sorting to newest logged first
   const [sortOption, setSortOption] = useState('newestToOldestLogged')
+  const [booksWithOriginalYears, setBooksWithOriginalYears] = useState([])
+
+  // Enrich books with original years if they are missing
+  useEffect(() => {
+    if (!loggedBooks) return;
+
+    const enrichBooks = async () => {
+      const enriched = await Promise.all(
+        loggedBooks.map(async (book) => {
+          if (book.originalYear) return book;
+          
+          const originalYear = await fetchOriginalPublicationYear(book.title, book.authors?.[0]);
+          return { ...book, originalYear };
+        })
+      );
+      setBooksWithOriginalYears(enriched);
+    };
+
+    enrichBooks();
+  }, [loggedBooks]);
 
   // If not logged in, display login page
   if (!user) {
     return <LoginPage />
   }
 
-  // Sort the loggedBooks array based on the selected sorting option
-  const sortedBooks = getSortedBooks(loggedBooks, sortOption)
+  // Sort the enriched books array based on the selected sorting option
+  const sortedBooks = getSortedBooks(booksWithOriginalYears.length > 0 ? booksWithOriginalYears : loggedBooks, sortOption)
   
   // Separation logic based on User Rating when sorting by rating, otherwise fallback to Google rating for the "Unrated" section
   const isRatingSort = sortOption.includes('Rating');

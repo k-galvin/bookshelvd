@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { fetchBookById } from '../services/apiService'
+import { fetchBookById, fetchOriginalPublicationYear } from '../services/apiService'
 import LogModal from './LogModal'
 import LoginPage from './LoginPage'
 
 export default function BookDetailPage({ user, loggedBooks, tbr, addBook, deleteBook, updateBook, addToTBR }) {
   const { id } = useParams()
   const [book, setBook] = useState(null)
+  const [originalYear, setOriginalYear] = useState(null)
   const [loading, setLoading] = useState(true)
   const [showLogModal, setShowLogModal] = useState(false)
   const [isBookLogged, setIsBookLogged] = useState(false)
@@ -18,6 +19,15 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
       try {
         const data = await fetchBookById(id)
         setBook(data)
+        
+        // Fetch original year from Open Library
+        if (data?.volumeInfo?.title) {
+          const year = await fetchOriginalPublicationYear(
+            data.volumeInfo.title, 
+            data.volumeInfo.authors?.[0]
+          )
+          setOriginalYear(year)
+        }
       } catch (error) {
         console.error("Error fetching book:", error)
       } finally {
@@ -40,9 +50,9 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
 
   const handleSaveLog = (logDetails) => {
     if (isBookLogged && userLog) {
-      updateBook(user, userLog.id, logDetails)
+      updateBook(user, userLog.id, { ...logDetails, originalYear })
     } else {
-      addBook(user, book, logDetails)
+      addBook(user, book, { ...logDetails, originalYear })
     }
     setShowLogModal(false)
   }
@@ -60,12 +70,12 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
   };
 
   const cover = ensureHttps(
+    info.imageLinks?.thumbnail || 
+    info.imageLinks?.smallThumbnail ||
     info.imageLinks?.extraLarge || 
     info.imageLinks?.large || 
-    info.imageLinks?.medium || 
-    info.imageLinks?.thumbnail || 
-    info.imageLinks?.smallThumbnail
-  ) || 'https://via.placeholder.com/300x450?text=No+Cover+Available';
+    info.imageLinks?.medium
+  );
 
   return (
     <div className="book-detail-page">
@@ -73,15 +83,24 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
       <div className="backdrop-container">
         <div 
           className="backdrop-image" 
-          style={{ backgroundImage: `url(${cover})` }}
-        ></div>
+          style={{ backgroundImage: cover ? `url(${cover})` : 'none' }}
+        >
+          {!cover && <div className="backdrop-placeholder"></div>}
+        </div>
         <div className="backdrop-overlay"></div>
       </div>
 
       <div className="book-detail-content">
         <div className="detail-left">
           <div className="large-cover-container">
-            <img src={cover} alt={info.title} />
+            {cover ? (
+              <img src={cover} alt={info.title} />
+            ) : (
+              <div className="no-cover large">
+                <div className="no-cover-title">{info.title}</div>
+                <div className="no-cover-author">{info.authors?.join(', ')}</div>
+              </div>
+            )}
           </div>
           
           <div className="page-rating-container">
@@ -101,7 +120,14 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
         <div className="detail-center">
           <h1 className="book-page-title">{info.title}</h1>
           <div className="book-page-meta">
-            <span className="release-year">{info.publishedDate?.split('-')[0]}</span>
+            <span className="release-year">
+              {originalYear || info.publishedDate?.split('-')[0]}
+            </span>
+            {originalYear && info.publishedDate?.split('-')[0] !== originalYear.toString() && (
+              <span className="edition-year">
+                (This edition {info.publishedDate?.split('-')[0]})
+              </span>
+            )}
             <span className="meta-separator">By</span>
             <span className="author-names">{info.authors?.join(', ')}</span>
           </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { searchBooks } from '../services/apiService'
+import { searchBooks, fetchOriginalPublicationYear } from '../services/apiService'
 import Book from './Book'
 import LoginPage from './LoginPage'
 
@@ -25,6 +25,18 @@ export default function BookSearchPage({ user, loggedBooks, tbr, addBook, delete
         setLoading(true)
         const response = await searchBooks(urlQuery)
         setQueriedBooks(response)
+
+        // Fetch original years in parallel for all results
+        const booksWithOriginalYear = await Promise.all(
+          response.map(async (book) => {
+            const originalYear = await fetchOriginalPublicationYear(
+              book.volumeInfo.title,
+              book.volumeInfo.authors?.[0]
+            )
+            return { ...book, originalYear }
+          })
+        )
+        setQueriedBooks(booksWithOriginalYear)
       } catch (error) {
         setError(error)
         setQueriedBooks([])
@@ -64,7 +76,8 @@ export default function BookSearchPage({ user, loggedBooks, tbr, addBook, delete
             queriedBooks.map(book => {
               const info = book.volumeInfo;
               const cover = ensureHttps(info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail);
-              const year = info.publishedDate?.split('-')[0];
+              const volumeYear = info.publishedDate?.split('-')[0];
+              const displayYear = book.originalYear || volumeYear;
               
               return (
                 <div 
@@ -90,7 +103,7 @@ export default function BookSearchPage({ user, loggedBooks, tbr, addBook, delete
                   <div className="result-details-clickable" onClick={() => navigate(`/book/${book.id}`)}>
                     <div className="result-title-row">
                       <span className="result-title">{info.title}</span>
-                      <span className="result-year">{year}</span>
+                      <span className="result-year">{displayYear}</span>
                     </div>
                     <div className="result-author">
                       By {info.authors?.join(', ')}

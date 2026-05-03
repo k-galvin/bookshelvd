@@ -15,6 +15,7 @@ export async function logBook(user, book, logDetails = {}) {
       book.volumeInfo?.imageLinks?.thumbnail || book.thumbnail || '',
     authors: book.volumeInfo?.authors || book.authors || [],
     publishedDate: book.volumeInfo?.publishedDate || book.publishedDate || '',
+    originalYear: logDetails.originalYear || book.originalYear || null,
     description: book.volumeInfo?.description || book.description || '',
     pageCount: book.volumeInfo?.pageCount || book.pageCount || '',
     averageRating: book.volumeInfo?.averageRating || book.averageRating || '',
@@ -147,10 +148,16 @@ export function getSortedBooks(loggedBooks, sortOption) {
   const compareFunction = (a, b) => {
     // Helper to get raw numeric/time value for comparison
     const getVal = (obj, field) => {
+      if (field === 'releaseYear') {
+        // Prioritize originalYear, fallback to publishedDate
+        const yearValue = obj.originalYear || obj.publishedDate;
+        if (!yearValue) return 0;
+        const year = yearValue.toString().split('-')[0];
+        return parseInt(year, 10) || 0;
+      }
+
       const val = obj[field];
-      if (!val) return 0;
-      
-      if (field === 'publishedDate') return new Date(val || 0).getTime();
+      if (val === undefined || val === null || val === '') return 0;
       
       // Precise timestamp comparison using milliseconds
       if (field === 'dateRead' || field === 'createdAt') {
@@ -166,9 +173,9 @@ export function getSortedBooks(loggedBooks, sortOption) {
 
     switch (sortOption) {
       case 'oldestToNewestRelease':
-        return getVal(a, 'publishedDate') - getVal(b, 'publishedDate')
+        return getVal(a, 'releaseYear') - getVal(b, 'releaseYear')
       case 'newestToOldestRelease':
-        return getVal(b, 'publishedDate') - getVal(a, 'publishedDate')
+        return getVal(b, 'releaseYear') - getVal(a, 'releaseYear')
       case 'highestToLowestRating':
         return getVal(b, 'userRating') - getVal(a, 'userRating')
       case 'lowestToHighestRating':

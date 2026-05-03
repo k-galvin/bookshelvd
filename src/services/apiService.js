@@ -127,4 +127,81 @@ const removeDuplicateBooks = books => {
   })
 }
 
-export { searchBooks, fetchBookById }
+// Fetch the original publication year from Open Library
+const fetchOriginalPublicationYear = async (title, author) => {
+  if (!title) return null;
+
+  // Clean the title - remove subtitles and anything in parentheses
+  const cleanTitle = title.split(':')[0].split('(')[0].trim();
+  const authorQuery = author || '';
+
+  // Use v2 cache key to clear out any old 1900 placeholder results
+  const cacheKey = `ol_year_v2_${encodeURIComponent(cleanTitle)}_${encodeURIComponent(authorQuery)}`;
+  const cachedResult = getCachedData(cacheKey);
+  if (cachedResult !== null) return cachedResult;
+
+  try {
+    // Strategy 1: Search with specific title and author fields
+    const query = new URLSearchParams({
+      title: cleanTitle,
+      author: authorQuery,
+      limit: 10
+    });
+
+    let url = `https://openlibrary.org/search.json?${query.toString()}`;
+    let response = await fetch(url);
+    let data = await response.json();
+
+    // Strategy 2: If no results, try a broader 'q' search
+    if (!data.docs || data.docs.length === 0) {
+      const broadQuery = new URLSearchParams({
+        q: `${cleanTitle} ${authorQuery}`,
+        limit: 10
+      });
+      url = `https://openlibrary.org/search.json?${broadQuery.toString()}`;
+      response = await fetch(url);
+      data = await response.json();
+    }
+
+    if (!data.docs || data.docs.length === 0) {
+      setCachedData(cacheKey, null);
+      return null;
+    }
+
+    // Find the minimum year among the results that match our author
+    let minYear = Infinity;
+    const targetAuthor = authorQuery.toLowerCase();
+
+    data.docs.forEach(doc => {
+      // Robust author check
+      const hasAuthorMatch = doc.author_name?.some(name => {
+        const n = name.toLowerCase();
+        return n.includes(targetAuthor) || targetAuthor.includes(n);
+      });
+
+      if (hasAuthorMatch) {
+        // Collect all potential years from this document
+        const potentialYears = [
+          doc.first_publish_year,
+          ...(doc.publish_year || [])
+        ].filter(y => y && typeof y === 'number' && y > 1901);
+
+        if (potentialYears.length > 0) {
+          const docMin = Math.min(...potentialYears);
+          if (docMin < minYear) {
+            minYear = docMin;
+          }
+        }
+      }
+    });
+
+    const resultYear = minYear === Infinity ? null : minYear;
+    setCachedData(cacheKey, resultYear);
+    return resultYear;
+  } catch (error) {
+    console.error('Error fetching original publication year:', error);
+    return null;
+  }
+};
+
+export { searchBooks, fetchBookById, fetchOriginalPublicationYear }
