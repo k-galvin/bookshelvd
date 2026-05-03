@@ -650,6 +650,10 @@ h2 {
   color: var(--lb-blue);
 }
 
+.delete-action:hover {
+  color: #ff3333 !important;
+}
+
 .panel-rating {
   padding: 1em;
   display: flex;

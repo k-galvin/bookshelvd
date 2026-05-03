@@ -1,6 +1,6 @@
 import './App.css'
 
-import { logBook, removeLoggedBook, fetchLoggedBooks, fetchWatchlist, addToWatchlist, removeFromWatchlist } from '../services/bookService'
+import { logBook, removeLoggedBook, fetchLoggedBooks, fetchWatchlist, addToWatchlist, removeFromWatchlist, updateLoggedBook } from '../services/bookService'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { useAuthentication } from '../services/authService'
 import { useState, useEffect } from 'react'
@@ -56,7 +56,15 @@ function App() {
   // Handling function for adding a book to firestore
   const addBook = async (user, book, logDetails = {}) => {
     try {
-      const loggedBook = await logBook(user, book, logDetails)
+      // Map logDetails from LogModal to the format expected by logBook service
+      const formattedDetails = {
+        rating: logDetails.userRating,
+        review: logDetails.userReview,
+        dateRead: logDetails.dateRead,
+        isLiked: logDetails.isLiked
+      }
+
+      const loggedBook = await logBook(user, book, formattedDetails)
       if (loggedBook) {
         // Update logged books
         setLoggedBooks(prevBooks => [...prevBooks, loggedBook])
@@ -67,6 +75,19 @@ function App() {
       }
     } catch (error) {
       setError('Error adding book: ' + error.message)
+    }
+  }
+
+  // Handling function for updating an existing log
+  const updateBook = async (user, logId, updates) => {
+    try {
+      await updateLoggedBook(user, logId, updates)
+      // Update local state
+      setLoggedBooks(prevBooks => 
+        prevBooks.map(book => book.id === logId ? { ...book, ...updates } : book)
+      )
+    } catch (error) {
+      setError('Error updating log: ' + error.message)
     }
   }
 
@@ -117,6 +138,7 @@ function App() {
                   user={user} 
                   addBook={addBook} 
                   deleteBook={deleteBook} 
+                  updateBook={updateBook}
                   loggedBooks={loggedBooks} 
                   tbr={tbr}
                   addToTBR={handleAddToTBR}
@@ -131,6 +153,7 @@ function App() {
                   user={user} 
                   addBook={addBook} 
                   deleteBook={deleteBook} 
+                  updateBook={updateBook}
                   loggedBooks={loggedBooks} 
                   tbr={tbr}
                   addToTBR={handleAddToTBR}
@@ -143,9 +166,10 @@ function App() {
               element={
                 <BookLogPage
                   user={user}
-                  addBook={addBook}
-                  deleteBook={deleteBook}
-                  loggedBooks={loggedBooks}
+                  addBook={addBook} 
+                  deleteBook={deleteBook} 
+                  updateBook={updateBook}
+                  loggedBooks={loggedBooks} 
                   tbr={tbr}
                   loading={loading}
                   addToTBR={handleAddToTBR}
@@ -158,9 +182,10 @@ function App() {
               element={
                 <TBRPage
                   user={user}
-                  addBook={addBook}
-                  deleteBook={deleteBook}
-                  loggedBooks={loggedBooks}
+                  addBook={addBook} 
+                  deleteBook={deleteBook} 
+                  updateBook={updateBook}
+                  loggedBooks={loggedBooks} 
                   tbr={tbr}
                   handleAddToTBR={handleAddToTBR}
                 />
@@ -172,9 +197,10 @@ function App() {
               element={
                 <BookDetailPage
                   user={user}
-                  addBook={addBook}
-                  deleteBook={deleteBook}
-                  loggedBooks={loggedBooks}
+                  addBook={addBook} 
+                  deleteBook={deleteBook} 
+                  updateBook={updateBook}
+                  loggedBooks={loggedBooks} 
                   tbr={tbr}
                   addToTBR={handleAddToTBR}
                 />

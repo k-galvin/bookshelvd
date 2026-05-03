@@ -3,7 +3,7 @@ import { getSortedBooks } from '../services/bookService'
 import LoggedBookGrid from './LoggedBookGrid'
 import LoginPage from './LoginPage'
 
-export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, tbr, loading, addToTBR }) {
+export default function BookLogPage({ user, deleteBook, addBook, updateBook, loggedBooks, tbr, loading, addToTBR }) {
   // Initialize sorting to newest logged first
   const [sortOption, setSortOption] = useState('newestToOldestLogged')
 
@@ -14,10 +14,19 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, tb
 
   // Sort the loggedBooks array based on the selected sorting option
   const sortedBooks = getSortedBooks(loggedBooks, sortOption)
-  const unratedBooks = loggedBooks ? loggedBooks.filter(book => book.averageRating === '') : []
-  const ratedBooks = sortedBooks ? sortedBooks.filter(book => !unratedBooks.includes(book)) : []
-  const noPageCountBooks = loggedBooks ? loggedBooks.filter(book => book.pageCount === '') : []
-  const pageCountBooks = sortedBooks ? sortedBooks.filter(book => !noPageCountBooks.includes(book)) : []
+  
+  // Separation logic based on User Rating when sorting by rating, otherwise fallback to Google rating for the "Unrated" section
+  const isRatingSort = sortOption.includes('Rating');
+  
+  const unratedBooks = loggedBooks ? loggedBooks.filter(book => {
+    if (isRatingSort) return !book.userRating || book.userRating === 0;
+    return book.averageRating === '' || book.averageRating === undefined;
+  }) : []
+  
+  const ratedBooks = sortedBooks ? sortedBooks.filter(book => !unratedBooks.some(ub => ub.id === book.id)) : []
+  
+  const noPageCountBooks = loggedBooks ? loggedBooks.filter(book => !book.pageCount) : []
+  const pageCountBooks = sortedBooks ? sortedBooks.filter(book => !noPageCountBooks.some(np => np.id === book.id)) : []
 
   return (
     <div className="book-log-page">
@@ -44,7 +53,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, tb
               <option value="newestToOldestRelease">Newest First</option>
               <option value="oldestToNewestRelease">Earliest First</option>
             </optgroup>
-            <optgroup label="Average Rating">
+            <optgroup label="Your Rating">
               <option value="highestToLowestRating">Highest First</option>
               <option value="lowestToHighestRating">Lowest First</option>
             </optgroup>
@@ -65,13 +74,14 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, tb
           </div>
         )}
 
-        {sortedBooks.length !== 0 ? (
+        {sortedBooks && sortedBooks.length !== 0 ? (
           <div className="books-grid-container">
             {sortOption.includes('Rating') && (
               <LoggedBookGrid
                 books={ratedBooks}
                 addBook={addBook}
                 deleteBook={deleteBook}
+                updateBook={updateBook}
                 user={user}
                 loggedBooks={loggedBooks}
                 tbr={tbr}
@@ -85,6 +95,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, tb
                 books={pageCountBooks}
                 addBook={addBook}
                 deleteBook={deleteBook}
+                updateBook={updateBook}
                 user={user}
                 loggedBooks={loggedBooks}
                 tbr={tbr}
@@ -98,6 +109,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, tb
                 books={sortedBooks}
                 addBook={addBook}
                 deleteBook={deleteBook}
+                updateBook={updateBook}
                 user={user}
                 loggedBooks={loggedBooks}
                 tbr={tbr}
@@ -110,14 +122,15 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, tb
           <div className="books-grid-container">No Logged Books</div>
         )}
 
-        {/* Unrated books displayed here if sorting by rating */}
+        {/* Books you haven't rated displayed here if sorting by rating */}
         {unratedBooks.length > 0 && sortOption.includes('Rating') && (
           <div className="missing-info-books-grid-container">
-            <h2>Unrated Books</h2>
+            <h2>Unrated by You</h2>
             <LoggedBookGrid
               books={unratedBooks}
               addBook={addBook}
               deleteBook={deleteBook}
+              updateBook={updateBook}
               user={user}
               loggedBooks={loggedBooks}
               tbr={tbr}
@@ -135,6 +148,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, tb
               books={noPageCountBooks}
               addBook={addBook}
               deleteBook={deleteBook}
+              updateBook={updateBook}
               user={user}
               loggedBooks={loggedBooks}
               tbr={tbr}

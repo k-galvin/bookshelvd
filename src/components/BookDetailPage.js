@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { fetchBookById } from '../services/apiService'
 import LogModal from './LogModal'
 import LoginPage from './LoginPage'
 
-export default function BookDetailPage({ user, loggedBooks, tbr, addBook, deleteBook, addToTBR }) {
+export default function BookDetailPage({ user, loggedBooks, tbr, addBook, deleteBook, updateBook, addToTBR }) {
   const { id } = useParams()
-  const navigate = useNavigate()
   const [book, setBook] = useState(null)
   const [loading, setLoading] = useState(true)
   const [showLogModal, setShowLogModal] = useState(false)
@@ -40,7 +39,11 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
   }, [loggedBooks, tbr, id])
 
   const handleSaveLog = (logDetails) => {
-    addBook(user, book, logDetails)
+    if (isBookLogged && userLog) {
+      updateBook(user, userLog.id, logDetails)
+    } else {
+      addBook(user, book, logDetails)
+    }
     setShowLogModal(false)
   }
 
@@ -123,17 +126,25 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
 
         <div className="detail-right">
           <div className="action-panel">
-            <div 
-              className={`panel-action ${isBookLogged ? 'active' : ''}`}
-              onClick={() => isBookLogged ? deleteBook(user, userLog) : setShowLogModal(true)}
-            >
-              <span className="material-symbols-outlined">{isBookLogged ? 'done' : 'visibility'}</span>
-              <span>{isBookLogged ? 'Read' : 'Read'}</span>
-            </div>
+            {isBookLogged ? (
+              <div className="panel-action active" onClick={() => setShowLogModal(true)}>
+                <span className="material-symbols-outlined">edit</span>
+                <span>Edit or Reshelf</span>
+              </div>
+            ) : (
+              <div className="panel-action" onClick={() => setShowLogModal(true)}>
+                <span className="material-symbols-outlined">visibility</span>
+                <span>Read</span>
+              </div>
+            )}
             
             <div 
               className={`panel-action ${userLog?.isLiked ? 'active' : ''}`}
-              onClick={() => {/* update like */}}
+              onClick={() => {
+                if (isBookLogged && userLog) {
+                  updateBook(user, userLog.id, { isLiked: !userLog.isLiked })
+                }
+              }}
             >
               <span className="material-symbols-outlined">favorite</span>
               <span>Like</span>
@@ -146,6 +157,13 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
               <span className="material-symbols-outlined">schedule</span>
               <span>TBR</span>
             </div>
+
+            {isBookLogged && (
+               <div className="panel-action delete-action" onClick={() => deleteBook(user, userLog)}>
+                <span className="material-symbols-outlined">delete</span>
+                <span>Remove Log</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -154,7 +172,8 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
         <LogModal 
           book={book} 
           onSave={handleSaveLog} 
-          onCancel={() => setShowLogModal(false)} 
+          onCancel={() => setShowLogModal(false)}
+          initialData={userLog || {}}
         />
       )}
     </div>

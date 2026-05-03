@@ -145,23 +145,52 @@ export function getSortedBooks(loggedBooks, sortOption) {
   if (!loggedBooks) return null
 
   const compareFunction = (a, b) => {
+    // Helper to get raw numeric/time value for comparison
+    const getVal = (obj, field) => {
+      const val = obj[field];
+      if (!val) return 0;
+      
+      if (field === 'publishedDate') return new Date(val || 0).getTime();
+      
+      // Precise timestamp comparison using milliseconds
+      if (field === 'dateRead' || field === 'createdAt') {
+        if (typeof val.toMillis === 'function') return val.toMillis();
+        if (val.seconds !== undefined) return val.seconds * 1000 + (val.nanoseconds || 0) / 1000000;
+        return new Date(val).getTime();
+      }
+      
+      if (field === 'userRating') return val || 0;
+      if (field === 'pageCount') return val || 0;
+      return val;
+    };
+
     switch (sortOption) {
       case 'oldestToNewestRelease':
-        return new Date(a.publishedDate) - new Date(b.publishedDate)
+        return getVal(a, 'publishedDate') - getVal(b, 'publishedDate')
       case 'newestToOldestRelease':
-        return new Date(b.publishedDate) - new Date(a.publishedDate)
+        return getVal(b, 'publishedDate') - getVal(a, 'publishedDate')
       case 'highestToLowestRating':
-        return (b.userRating || b.averageRating) - (a.userRating || a.averageRating)
+        return getVal(b, 'userRating') - getVal(a, 'userRating')
       case 'lowestToHighestRating':
-        return (a.userRating || a.averageRating) - (b.userRating || b.averageRating)
-      case 'oldestToNewestLogged':
-        return (a.dateRead?.seconds || a.createdAt?.seconds) - (b.dateRead?.seconds || b.createdAt?.seconds)
-      case 'newestToOldestLogged':
-        return (b.dateRead?.seconds || b.createdAt?.seconds) - (a.dateRead?.seconds || a.createdAt?.seconds)
+        return getVal(a, 'userRating') - getVal(b, 'userRating')
+      case 'oldestToNewestLogged': {
+        const timeA = getVal(a, 'dateRead') || getVal(a, 'createdAt');
+        const timeB = getVal(b, 'dateRead') || getVal(b, 'createdAt');
+        // If they were read on same day, use creation time as tie-breaker
+        if (timeA === timeB) return getVal(a, 'createdAt') - getVal(b, 'createdAt');
+        return timeA - timeB;
+      }
+      case 'newestToOldestLogged': {
+        const timeA = getVal(a, 'dateRead') || getVal(a, 'createdAt');
+        const timeB = getVal(b, 'dateRead') || getVal(b, 'createdAt');
+        // If they were read on same day, use creation time as tie-breaker (newest entry first)
+        if (timeA === timeB) return getVal(b, 'createdAt') - getVal(a, 'createdAt');
+        return timeB - timeA;
+      }
       case 'shortestToLongestLength':
-        return a.pageCount - b.pageCount
+        return getVal(a, 'pageCount') - getVal(b, 'pageCount')
       case 'longestToShortestLength':
-        return b.pageCount - a.pageCount
+        return getVal(b, 'pageCount') - getVal(a, 'pageCount')
       default:
         return 0
     }
