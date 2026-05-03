@@ -3,7 +3,7 @@ import { searchBooks } from '../services/apiService'
 import Book from './Book'
 import LoginPage from './LoginPage'
 
-export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks, addToWatchlist }) {
+export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks, watchlist, addToWatchlist }) {
   const [query, setQuery] = useState('')
   const [queriedBooks, setQueriedBooks] = useState([])
   const [loading, setLoading] = useState(false)
@@ -86,6 +86,7 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks,
                         : null
                     }
                     loggedBooks={loggedBooks}
+                    watchlist={watchlist}
                     addBook={addBook}
                     deleteBook={deleteBook}
                     user={user}

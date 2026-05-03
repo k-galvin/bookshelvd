@@ -1,6 +1,6 @@
 import Book from './Book'
 
-export default function AuthorList({ authorBooks, loggedBooks, addBook, deleteBook, user, addToWatchlist }) {
+export default function AuthorList({ authorBooks, loggedBooks, watchlist, addBook, deleteBook, user, addToWatchlist }) {
   return authorBooks && authorBooks.length > 0 ? (
     // Display five books by the selected author if available
     <div className="books-container home">
@@ -14,6 +14,7 @@ export default function AuthorList({ authorBooks, loggedBooks, addBook, deleteBo
                 : null
             }
             loggedBooks={loggedBooks}
+            watchlist={watchlist}
             addBook={addBook}
             deleteBook={deleteBook}
             user={user}

@@ -183,9 +183,11 @@ header {
   color: #ff3333;
 }
 
-.action-btn[title='Add to Watchlist']:hover {
+.action-btn[title="Add to Watchlist"]:hover, 
+.action-btn.active[title="Remove from Watchlist"] {
   color: var(--lb-blue);
 }
+
 
 /* Page Layouts */
 .pages-container {
@@ -213,6 +215,10 @@ h2 {
 }
 
 /* Grids */
+.books-grid-container {
+  width: 100%;
+}
+
 .books-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -476,6 +482,7 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .search-bar {

@@ -3,7 +3,7 @@ import { getSortedBooks } from '../services/bookService'
 import LoggedBookGrid from './LoggedBookGrid'
 import LoginPage from './LoginPage'
 
-export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, loading, addToWatchlist }) {
+export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, watchlist, loading, addToWatchlist }) {
   // Initialize sorting to newest logged first
   const [sortOption, setSortOption] = useState('newestToOldestLogged')
 
@@ -74,6 +74,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
                 deleteBook={deleteBook}
                 user={user}
                 loggedBooks={loggedBooks}
+                watchlist={watchlist}
                 loading={loading}
                 addToWatchlist={addToWatchlist}
               />
@@ -86,6 +87,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
                 deleteBook={deleteBook}
                 user={user}
                 loggedBooks={loggedBooks}
+                watchlist={watchlist}
                 loading={loading}
                 addToWatchlist={addToWatchlist}
               />
@@ -98,6 +100,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
                 deleteBook={deleteBook}
                 user={user}
                 loggedBooks={loggedBooks}
+                watchlist={watchlist}
                 loading={loading}
                 addToWatchlist={addToWatchlist}
               />
@@ -117,6 +120,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
               deleteBook={deleteBook}
               user={user}
               loggedBooks={loggedBooks}
+              watchlist={watchlist}
               loading={loading}
               addToWatchlist={addToWatchlist}
             />
@@ -133,6 +137,7 @@ export default function BookLogPage({ user, deleteBook, addBook, loggedBooks, lo
               deleteBook={deleteBook}
               user={user}
               loggedBooks={loggedBooks}
+              watchlist={watchlist}
               loading={loading}
               addToWatchlist={addToWatchlist}
             />

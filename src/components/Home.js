@@ -3,7 +3,7 @@ import { searchBooks } from '../services/apiService'
 import LoginPage from './LoginPage'
 import AuthorList from './AuthorList'
 
-export default function Home({ user, addBook, deleteBook, loggedBooks, addToWatchlist }) {
+export default function Home({ user, addBook, deleteBook, loggedBooks, watchlist, addToWatchlist }) {
   const [selectedAuthor, setSelectedAuthor] = useState('')
   const [authorBooks, setAuthorBooks] = useState([])
   const [loading, setLoading] = useState(true)
@@ -68,6 +68,7 @@ export default function Home({ user, addBook, deleteBook, loggedBooks, addToWatc
         <AuthorList
           authorBooks={authorBooks}
           loggedBooks={loggedBooks}
+          watchlist={watchlist}
           addBook={addBook}
           deleteBook={deleteBook}
           user={user}

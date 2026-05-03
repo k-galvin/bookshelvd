@@ -5,6 +5,7 @@ import LogModal from './LogModal'
 export default function Book({
   book,
   loggedBooks,
+  watchlist,
   addBook,
   deleteBook,
   user,
@@ -17,22 +18,29 @@ export default function Book({
   averageRating
 }) {
   const [isBookLogged, setIsBookLogged] = useState(false)
+  const [isInWatchlist, setIsInWatchlist] = useState(false)
   const [displayInfo, setDisplayInfo] = useState(false)
   const [showLogModal, setShowLogModal] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
   const [userRating, setUserRating] = useState(0)
 
-  // Update whether a book has been logged
+  // Update whether a book has been logged or is in watchlist
   useEffect(() => {
+    const volumeId = book.id || book.volumeId
+    
     if (loggedBooks) {
-      const loggedInstance = loggedBooks.find(lb => lb.volumeId === (book.id || book.volumeId) || lb.id === book.id);
+      const loggedInstance = loggedBooks.find(lb => lb.volumeId === volumeId || lb.id === book.id);
       setIsBookLogged(!!loggedInstance)
       if (loggedInstance) {
         setIsLiked(loggedInstance.isLiked || false)
         setUserRating(loggedInstance.userRating || 0)
       }
     }
-  }, [loggedBooks, book])
+
+    if (watchlist) {
+      setIsInWatchlist(watchlist.some(b => b.volumeId === volumeId))
+    }
+  }, [loggedBooks, watchlist, book])
 
   const handleEyeClick = (e) => {
     e.stopPropagation();
@@ -53,6 +61,7 @@ export default function Book({
 
   const handleLikeClick = (e) => {
     e.stopPropagation();
+    // In a full implementation, we would update the DB here
     setIsLiked(!isLiked);
   }
 
@@ -101,9 +110,9 @@ export default function Book({
               favorite
             </span>
             <span 
-              className="action-btn material-symbols-outlined" 
+              className={`action-btn material-symbols-outlined ${isInWatchlist ? 'active' : ''}`} 
               onClick={handleWatchlistClick}
-              title="Add to Watchlist"
+              title={isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
             >
               schedule
             </span>

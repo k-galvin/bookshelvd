@@ -1,6 +1,6 @@
 import './App.css'
 
-import { logBook, removeLoggedBook, fetchLoggedBooks } from '../services/bookService'
+import { logBook, removeLoggedBook, fetchLoggedBooks, fetchWatchlist, addToWatchlist, removeFromWatchlist } from '../services/bookService'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { useAuthentication } from '../services/authService'
 import { useState, useEffect } from 'react'
@@ -10,34 +10,36 @@ import BookLogPage from './BookLogPage'
 import WatchlistPage from './WatchlistPage'
 import Header from './Header'
 import Home from './Home'
-import { addToWatchlist, removeFromWatchlist } from '../services/bookService'
 
 function App() {
   const [loggedBooks, setLoggedBooks] = useState([])
+  const [watchlist, setWatchlist] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const user = useAuthentication()
 
-  // Fetch all logged book data from firebase
+  // Fetch all logged book data and watchlist from firebase
   useEffect(() => {
     async function fetchData() {
       try {
-        const books = await fetchLoggedBooks(user.uid)
+        const [books, watchlistBooks] = await Promise.all([
+          fetchLoggedBooks(user.uid),
+          fetchWatchlist(user.uid)
+        ])
         setLoggedBooks(books)
+        setWatchlist(watchlistBooks)
       } catch (error) {
-        setError('Error fetching books: ' + error)
+        setError('Error fetching data: ' + error)
       } finally {
         setLoading(false)
       }
     }
 
-    // Set loading status for logged books
-    setLoading(true)
-
     if (user) {
+      setLoading(true)
       fetchData()
     }
-  }, [user, loggedBooks.length])
+  }, [user])
 
   // Handling function for deleting a book from firestore
   const deleteBook = async (user, book) => {
@@ -58,7 +60,9 @@ function App() {
         // Update logged books
         setLoggedBooks(prevBooks => [...prevBooks, loggedBook])
         // If it was in watchlist, remove it
-        await removeFromWatchlist(user, book.id || book.volumeId)
+        const volumeId = book.id || book.volumeId
+        await removeFromWatchlist(user, volumeId)
+        setWatchlist(prev => prev.filter(b => b.volumeId !== volumeId))
       }
     } catch (error) {
       setError('Error adding book: ' + error.message)
@@ -67,9 +71,20 @@ function App() {
 
   const handleAddToWatchlist = async (user, book) => {
     try {
-      await addToWatchlist(user, book)
+      const volumeId = book.id || book.volumeId
+      const isInWatchlist = watchlist.some(b => b.volumeId === volumeId)
+      
+      if (isInWatchlist) {
+        await removeFromWatchlist(user, volumeId)
+        setWatchlist(prev => prev.filter(b => b.volumeId !== volumeId))
+      } else {
+        await addToWatchlist(user, book)
+        // Refresh watchlist to get the new list with IDs
+        const updatedWatchlist = await fetchWatchlist(user.uid)
+        setWatchlist(updatedWatchlist)
+      }
     } catch (error) {
-      setError('Error adding to watchlist: ' + error.message)
+      setError('Error updating watchlist: ' + error.message)
     }
   }
 
@@ -102,6 +117,7 @@ function App() {
                   addBook={addBook} 
                   deleteBook={deleteBook} 
                   loggedBooks={loggedBooks} 
+                  watchlist={watchlist}
                   addToWatchlist={handleAddToWatchlist}
                 />
               }
@@ -115,6 +131,7 @@ function App() {
                   addBook={addBook} 
                   deleteBook={deleteBook} 
                   loggedBooks={loggedBooks} 
+                  watchlist={watchlist}
                   addToWatchlist={handleAddToWatchlist}
                 />
               }
@@ -128,7 +145,9 @@ function App() {
                   addBook={addBook}
                   deleteBook={deleteBook}
                   loggedBooks={loggedBooks}
+                  watchlist={watchlist}
                   loading={loading}
+                  addToWatchlist={handleAddToWatchlist}
                 />
               }
             />
@@ -141,6 +160,7 @@ function App() {
                   addBook={addBook}
                   deleteBook={deleteBook}
                   loggedBooks={loggedBooks}
+                  watchlist={watchlist}
                 />
               }
             />

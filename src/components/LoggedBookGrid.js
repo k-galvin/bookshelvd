@@ -1,6 +1,6 @@
 import Book from './Book'
 
-export default function LoggedBookGrid({ books, addBook, deleteBook, user, loggedBooks, addToWatchlist }) {
+export default function LoggedBookGrid({ books, addBook, deleteBook, user, loggedBooks, watchlist, addToWatchlist }) {
   return (
     <div>
       <div>
@@ -13,6 +13,7 @@ export default function LoggedBookGrid({ books, addBook, deleteBook, user, logge
                   book={book}
                   cover={book.thumbnail}
                   loggedBooks={loggedBooks}
+                  watchlist={watchlist}
                   addBook={addBook}
                   deleteBook={deleteBook}
                   user={user}
