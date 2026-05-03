@@ -92,12 +92,19 @@ export default function Book({
   return (
     <div className={size === 'large' ? 'large-book-container' : 'small-book-container'}>
       <div className="cover-container" style={sizeStyle} onClick={handleCoverClick}>
-        <img
-          src={cover || 'https://via.placeholder.com/150x225?text=No+Cover'}
-          className="cover-img"
-          alt={`${title}`}
-          style={sizeStyle}
-        />
+        {cover ? (
+          <img
+            src={cover}
+            className="cover-img"
+            alt={`${title}`}
+            style={sizeStyle}
+          />
+        ) : (
+          <div className="no-cover" style={sizeStyle}>
+            <div className="no-cover-title">{title}</div>
+            <div className="no-cover-author">{authors?.join(', ')}</div>
+          </div>
+        )}
 
         <div className="overlay-icon">
           <div className="book-actions">

@@ -1,22 +1,29 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { searchBooks } from '../services/apiService'
 import Book from './Book'
 import LoginPage from './LoginPage'
 
-export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks, tbr, addToTBR }) {
-  const [query, setQuery] = useState('')
+export default function BookSearchPage({ user, loggedBooks, tbr, addBook, deleteBook, updateBook, addToTBR }) {
+  const [searchParams] = useSearchParams()
+  const urlQuery = searchParams.get('q') || ''
+  const navigate = useNavigate()
+  
   const [queriedBooks, setQueriedBooks] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // Get ten books based on the user's query, with results every 300ms
   useEffect(() => {
-    let timeoutId
+    if (!urlQuery) {
+      setQueriedBooks([])
+      return
+    }
 
     const handleSearch = async () => {
       try {
         setError('')
-        const response = await searchBooks(query)
+        setLoading(true)
+        const response = await searchBooks(urlQuery)
         setQueriedBooks(response)
       } catch (error) {
         setError(error)
@@ -26,79 +33,74 @@ export default function BookSearchPage({ user, addBook, deleteBook, loggedBooks,
       }
     }
 
-    // Delay the execution of handleSearch
-    timeoutId = setTimeout(() => {
-      handleSearch()
-    }, 300)
+    handleSearch()
+  }, [urlQuery])
 
-    // Clear the timeout
-    return () => {
-      clearTimeout(timeoutId)
-    }
-  }, [query])
+  if (!user) return <LoginPage />
 
-  // If not logged in, display login page
-  if (!user) {
-    return <LoginPage />
-  }
-
-  // Handle query input change
-  const handleInputChange = e => {
-    setQuery(e.target.value)
-    setLoading(true)
-  }
+  // Helper to ensure image URLs are HTTPS
+  const ensureHttps = (url) => {
+    if (!url) return null;
+    return url.replace('http://', 'https://');
+  };
 
   return (
-    <div className="search-page">
-      <h2>Search Books</h2>
-      {/* Search query input */}
-      <input
-        className="search-bar"
-        id="search-bar"
-        type="text"
-        value={query}
-        onChange={handleInputChange}
-        placeholder="Search for books..."
-      />
+    <div className="search-page-new">
+      <div className="search-header">
+        <h2>SEARCH RESULTS FOR "{urlQuery.toUpperCase()}"</h2>
+      </div>
 
-      {/* Display loading spinner while fetching books based on query */}
       {loading && (
         <div className="spinner-container">
           <div className="spinner"></div>
         </div>
       )}
 
-      {/* Display error message if books can't be fetched */}
       {error ? (
-        <div className="books-grid-container search error">Error: {error.message}</div>
+        <div className="search-results-error">Error: {error.message}</div>
       ) : (
-        // Display at most 10 books that match the query
-        <div className="books-grid-container search">
+        <div className="search-results-list">
           {queriedBooks.length !== 0 ? (
-            <div className="books-container">
-              {queriedBooks.map(book => (
-                <div key={book.id}>
-                  <Book
-                    book={book}
-                    cover={
-                      book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.smallThumbnail
-                        ? book.volumeInfo.imageLinks.smallThumbnail
-                        : null
-                    }
-                    loggedBooks={loggedBooks}
-                    tbr={tbr}
-                    addBook={addBook}
-                    deleteBook={deleteBook}
-                    user={user}
-                    addToTBR={addToTBR}
-                    title={book.volumeInfo.title}
-                    authors={book.volumeInfo.authors}
-                    description={book.volumeInfo.description}
-                    averageRating={book.volumeInfo.averageRating}
-                  />
+            queriedBooks.map(book => {
+              const info = book.volumeInfo;
+              const cover = ensureHttps(info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail);
+              const year = info.publishedDate?.split('-')[0];
+              
+              return (
+                <div 
+                  key={book.id} 
+                  className="search-result-row"
+                >
+                  <div className="result-cover-interactive">
+                    <Book
+                      book={book}
+                      cover={cover}
+                      loggedBooks={loggedBooks}
+                      tbr={tbr}
+                      addBook={addBook}
+                      deleteBook={deleteBook}
+                      updateBook={updateBook}
+                      user={user}
+                      addToTBR={addToTBR}
+                      title={info.title}
+                      authors={info.authors}
+                      size="small"
+                    />
+                  </div>
+                  <div className="result-details-clickable" onClick={() => navigate(`/book/${book.id}`)}>
+                    <div className="result-title-row">
+                      <span className="result-title">{info.title}</span>
+                      <span className="result-year">{year}</span>
+                    </div>
+                    <div className="result-author">
+                      By {info.authors?.join(', ')}
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
+              )
+            })
+          ) : urlQuery && !loading ? (
+             <div className="no-results">No books found for "{urlQuery}"</div>
           ) : null}
         </div>
       )}

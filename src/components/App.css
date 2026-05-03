@@ -71,6 +71,145 @@ header {
   max-height: 2.5em;
 }
 
+.header-auth {
+  display: flex;
+  align-items: center;
+}
+
+.header-search-wrapper {
+  display: flex;
+  align-items: center;
+  margin-right: 1em;
+}
+
+.search-trigger {
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.5em !important;
+  transition: color 0.2s;
+}
+
+.search-trigger:hover {
+  color: var(--text-white);
+}
+
+.header-search-container-expanded {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 3px;
+  padding: 2px;
+}
+
+.header-search-input-expanded {
+  border: none;
+  background: transparent;
+  padding: 0.4em 2.5em 0.4em 0.8em;
+  font-size: 0.9em;
+  width: 250px;
+  outline: none;
+  color: #14181c;
+  font-weight: 700;
+}
+
+.search-submit-icon {
+  position: absolute;
+  right: 5px;
+  color: #667788;
+  cursor: pointer;
+  font-size: 1.2em !important;
+}
+
+.search-submit-icon:hover {
+  color: var(--lb-green);
+}
+
+/* Search Page New Layout */
+.search-page-new {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.search-header h2 {
+  font-size: 1em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5em;
+  margin-bottom: 0;
+}
+
+.search-results-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-result-row {
+  display: flex;
+  padding: 1em 0;
+  border-bottom: 1px solid #2c3440;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.search-result-row:hover {
+  background-color: rgba(255,255,255,0.03);
+}
+
+.result-cover-interactive {
+  width: 70px;
+  flex-shrink: 0;
+}
+
+.result-cover-interactive .cover-container {
+  width: 70px !important;
+  height: 105px !important;
+}
+
+.result-cover-interactive .cover-img {
+  width: 70px !important;
+  height: 105px !important;
+}
+
+.result-details-clickable {
+  margin-left: 1.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.result-title-row {
+  display: flex;
+  align-items: baseline;
+}
+
+.result-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.4em;
+  font-weight: 700;
+  color: white;
+}
+
+.result-year {
+  color: var(--text-muted);
+  font-size: 1.1em;
+  margin-left: 10px;
+}
+
+.result-author {
+  color: var(--lb-blue);
+  font-weight: 700;
+  margin-top: 5px;
+  font-size: 0.9em;
+}
+
+.no-results {
+  padding: 3em;
+  text-align: center;
+  color: var(--text-muted);
+}
+
 .user-button {
   color: var(--text-white);
   background-color: var(--lb-green);
@@ -133,6 +272,48 @@ header {
   object-fit: cover;
 }
 
+.no-cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #2c3440 0%, #14181c 100%);
+  padding: 10px;
+  text-align: center;
+  box-sizing: border-box;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+.no-cover-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.8em;
+  color: var(--text-white);
+  margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.no-cover-author {
+  font-size: 0.6em;
+  color: var(--lb-blue);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.large-book-container .no-cover-title {
+  font-size: 1em;
+}
+
+.large-book-container .no-cover-author {
+  font-size: 0.8em;
+}
+
 .overlay-icon {
   position: absolute;
   top: 0;
@@ -167,6 +348,38 @@ header {
     filter 0.2s;
   filter: brightness(0.7);
   color: var(--text-muted);
+}
+
+.small-book-container .action-btn {
+  font-size: 1.4em;
+}
+
+.small-book-container .book-actions {
+  gap: 10px;
+}
+
+.result-cover-interactive .action-btn {
+  font-size: 1.1em;
+}
+
+.result-cover-interactive .book-actions {
+  gap: 5px;
+}
+
+.result-cover-interactive .no-cover {
+  width: 70px !important;
+  height: 105px !important;
+  padding: 5px;
+}
+
+.result-cover-interactive .no-cover-title {
+  font-size: 0.55em;
+  margin-bottom: 2px;
+  -webkit-line-clamp: 4;
+}
+
+.result-cover-interactive .no-cover-author {
+  font-size: 0.45em;
 }
 
 .action-btn:hover {
