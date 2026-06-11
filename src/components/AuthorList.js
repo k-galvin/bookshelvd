@@ -1,8 +1,7 @@
 import Book from './Book'
 
-export default function AuthorList({ authorBooks, loggedBooks, tbr, addBook, deleteBook, user, addToTBR }) {
+export default function AuthorList({ authorBooks, ...props }) {
   return authorBooks && authorBooks.length > 0 ? (
-    // Display five books by the selected author if available
     <div className="books-container home">
       {authorBooks.slice(0, 5).map(book => (
         <div key={book.id}>
@@ -13,17 +12,12 @@ export default function AuthorList({ authorBooks, loggedBooks, tbr, addBook, del
                 ? book.volumeInfo.imageLinks.smallThumbnail
                 : null
             }
-            loggedBooks={loggedBooks}
-            tbr={tbr}
-            addBook={addBook}
-            deleteBook={deleteBook}
-            user={user}
-            addToTBR={addToTBR}
             title={book.volumeInfo.title}
             size="large"
             authors={book.volumeInfo.authors}
             description={book.volumeInfo.description}
             averageRating={book.volumeInfo.averageRating}
+            {...props}
           />
         </div>
       ))}

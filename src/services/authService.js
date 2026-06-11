@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth'
 import { auth, db } from '../firebaseConfig'
 import { collection, doc, setDoc, getDoc } from 'firebase/firestore'
@@ -20,16 +21,21 @@ export function SignOut() {
   }
 
   return (
-    <div>
-      <div onClick={() => setDropdownOpen(!isDropdownOpen)}>
+    <div className="header-user-menu">
+      <div onClick={() => setDropdownOpen(!isDropdownOpen)} style={{ position: 'relative' }}>
         <div className="username-container">
           <div className="username">{auth.currentUser.displayName}</div>
           <div className="material-symbols-outlined">expand_more</div>
         </div>
         {isDropdownOpen && (
-          <div className="dropdown-content">
-            <button className="user-button" onClick={handleSignOut}>
-              SIGN OUT
+          <div className="dropdown-content header-dropdown-menu">
+            <Link to="/profile" className="dropdown-menu-item">Profile</Link>
+            <Link to="/diary" className="dropdown-menu-item">Diary</Link>
+            <Link to="/liked" className="dropdown-menu-item">Liked Books</Link>
+            <Link to="/lists" className="dropdown-menu-item">Lists</Link>
+            <div className="dropdown-divider" />
+            <button className="dropdown-menu-item signout-btn" onClick={handleSignOut}>
+              Sign Out
             </button>
           </div>
         )}

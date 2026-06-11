@@ -1,10 +1,43 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { fetchBookById, fetchOriginalPublicationYear } from '../services/apiService'
 import LogModal from './LogModal'
 import LoginPage from './LoginPage'
+import StarRating from './StarRating'
 
-export default function BookDetailPage({ user, loggedBooks, tbr, addBook, deleteBook, updateBook, addToTBR }) {
+const getMostRecentLog = (loggedBooks, volumeId) => {
+  if (!loggedBooks) return null
+  const matched = loggedBooks.filter(lb => lb.volumeId === volumeId)
+  if (matched.length === 0) return null
+  
+  const getMs = (val) => {
+    if (!val) return 0;
+    if (typeof val.toMillis === 'function') return val.toMillis();
+    if (val.seconds !== undefined) return val.seconds * 1000 + (val.nanoseconds || 0) / 1000000;
+    return new Date(val).getTime();
+  };
+
+  return [...matched].sort((a, b) => {
+    const timeA = getMs(a.dateRead) || getMs(a.createdAt);
+    const timeB = getMs(b.dateRead) || getMs(b.createdAt);
+    return timeB - timeA;
+  })[0];
+}
+
+
+export default function BookDetailPage({ 
+  user, 
+  loggedBooks, 
+  tbr, 
+  addBook, 
+  deleteBook, 
+  updateBook, 
+  addToTBR,
+  lists = [],
+  onAssignToList,
+  onMarkAsRead,
+  onUpdateBookRating
+}) {
   const { id } = useParams()
   const [book, setBook] = useState(null)
   const [originalYear, setOriginalYear] = useState(null)
@@ -39,7 +72,7 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
 
   useEffect(() => {
     if (loggedBooks && id) {
-      const loggedInstance = loggedBooks.find(lb => lb.volumeId === id);
+      const loggedInstance = getMostRecentLog(loggedBooks, id);
       setIsBookLogged(!!loggedInstance)
       setUserLog(loggedInstance || null)
     }
@@ -49,12 +82,48 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
   }, [loggedBooks, tbr, id])
 
   const handleSaveLog = (logDetails) => {
-    if (isBookLogged && userLog) {
-      updateBook(user, userLog.id, { ...logDetails, originalYear })
+    if (logDetails.id) {
+      updateBook(user, logDetails.id, { ...logDetails, originalYear })
     } else {
       addBook(user, book, { ...logDetails, originalYear })
     }
     setShowLogModal(false)
+  }
+
+  const handleLikeClick = () => {
+    if (isBookLogged && userLog) {
+      updateBook(user, userLog.id, { isLiked: !userLog.isLiked })
+    } else {
+      addBook(user, book, { isLiked: true, userRating: 0, userReview: '' })
+    }
+  }
+
+  const handleRatingSelect = async (ratingValue) => {
+    if (onUpdateBookRating) {
+      await onUpdateBookRating(user, book || { id, volumeId: id }, ratingValue)
+    } else if (isBookLogged && userLog) {
+      updateBook(user, userLog.id, { userRating: ratingValue })
+    } else {
+      addBook(user, book, { userRating: ratingValue, isLiked: false, userReview: '' })
+    }
+  }
+
+  const handleEyeClick = async () => {
+    if (onMarkAsRead) {
+      await onMarkAsRead(user, book || { id, volumeId: id })
+    } else {
+      if (isBookLogged) {
+        deleteBook(user, userLog)
+      } else {
+        setShowLogModal(true)
+      }
+    }
+  }
+
+  const handleTBRClick = () => {
+    if (addToTBR) {
+      addToTBR(user, book || { id, volumeId: id })
+    }
   }
 
   if (!user) return <LoginPage />
@@ -91,6 +160,7 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
       </div>
 
       <div className="book-detail-content">
+        {/* Left Column: Cover */}
         <div className="detail-left">
           <div className="large-cover-container">
             {cover ? (
@@ -103,20 +173,16 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
             )}
           </div>
           
-          <div className="page-rating-container">
-            <div className="star-rating page-rating">
-                {[1, 2, 3, 4, 5].map((star) => (
-                <span 
-                  key={star} 
-                  className={`star ${(userLog?.userRating || 0) >= star ? 'filled' : ''}`}
-                >
-                  ★
-                </span>
-              ))}
+          {/* Average Rating Stats display */}
+          {info.averageRating && (
+            <div className="average-rating-container">
+              <span className="avg-rating-val">{info.averageRating}</span>
+              <span className="avg-rating-lbl">Google Rating</span>
             </div>
-          </div>
+          )}
         </div>
 
+        {/* Center Column: Meta & Review */}
         <div className="detail-center">
           <h1 className="book-page-title">{info.title}</h1>
           <div className="book-page-meta">
@@ -125,11 +191,20 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
             </span>
             {originalYear && info.publishedDate?.split('-')[0] !== originalYear.toString() && (
               <span className="edition-year">
-                (This edition {info.publishedDate?.split('-')[0]})
+                This edition published in {info.publishedDate?.split('-')[0]}
               </span>
             )}
             <span className="meta-separator">By</span>
-            <span className="author-names">{info.authors?.join(', ')}</span>
+            <span className="author-names">
+              {info.authors?.map((author, index) => (
+                <span key={author}>
+                  {index > 0 && ', '}
+                  <Link to={`/author/${encodeURIComponent(author)}`} className="author-link">
+                    {author}
+                  </Link>
+                </span>
+              ))}
+            </span>
           </div>
           
           <div className="book-page-description">
@@ -138,58 +213,102 @@ export default function BookDetailPage({ user, loggedBooks, tbr, addBook, delete
 
           {userLog && (
             <div className="user-review-section">
-              <h3>YOUR REVIEW</h3>
+              <h3 className="section-title-underlined">YOUR REVIEW</h3>
               <div className="user-rating-display">
-                {[...Array(5)].map((_, i) => (
-                  <span key={i} className={`small-star ${i < userLog.userRating ? 'filled' : ''}`}>★</span>
-                ))}
-                {userLog.isLiked && <span className="material-symbols-outlined small-heart-icon">favorite</span>}
+                {userLog.userRating > 0 && <StarRating rating={userLog.userRating} size="medium" />}
+                {userLog.isLiked && <span className="material-symbols-outlined review-heart-icon">favorite</span>}
               </div>
-              <p className="user-review-text">{userLog.userReview || "No written review."}</p>
+              <p className="user-review-text">{userLog.userReview || "No written review yet. Click Edit below to write one."}</p>
             </div>
           )}
         </div>
 
+        {/* Right Column: Actions sidebar */}
         <div className="detail-right">
           <div className="action-panel">
-            {isBookLogged ? (
-              <div className="panel-action active" onClick={() => setShowLogModal(true)}>
-                <span className="material-symbols-outlined">edit</span>
-                <span>Edit or Reshelf</span>
-              </div>
-            ) : (
-              <div className="panel-action" onClick={() => setShowLogModal(true)}>
+            {/* Upper Action Toggles */}
+            <div className="panel-actions-row">
+              <div 
+                className={`action-icon-btn ${isBookLogged ? 'active-green' : ''}`}
+                onClick={handleEyeClick}
+                title={isBookLogged ? "Mark as unread" : "Mark as read"}
+              >
                 <span className="material-symbols-outlined">visibility</span>
-                <span>Read</span>
+                <span className="btn-label">Read</span>
               </div>
-            )}
-            
-            <div 
-              className={`panel-action ${userLog?.isLiked ? 'active' : ''}`}
-              onClick={() => {
-                if (isBookLogged && userLog) {
-                  updateBook(user, userLog.id, { isLiked: !userLog.isLiked })
-                }
-              }}
-            >
-              <span className="material-symbols-outlined">favorite</span>
-              <span>Like</span>
+
+              <div 
+                className={`action-icon-btn ${userLog?.isLiked ? 'active-orange' : ''}`}
+                onClick={handleLikeClick}
+                title={userLog?.isLiked ? "Unlike" : "Like"}
+              >
+                <span className="material-symbols-outlined">favorite</span>
+                <span className="btn-label">Like</span>
+              </div>
+
+              <div 
+                className={`action-icon-btn ${isInTBR ? 'active-blue' : ''}`}
+                onClick={handleTBRClick}
+                title={isInTBR ? "Remove from TBR" : "Add to TBR"}
+              >
+                <span className="material-symbols-outlined">schedule</span>
+                <span className="btn-label">TBR</span>
+              </div>
             </div>
 
-            <div 
-              className={`panel-action ${isInTBR ? 'active-blue' : ''}`}
-              onClick={() => addToTBR(user, book)}
-            >
-              <span className="material-symbols-outlined">schedule</span>
-              <span>TBR</span>
+            {/* Sidebar Star Rating Selector */}
+            <div className="panel-rating-section">
+              <label>RATE</label>
+              <div className="panel-rating-row">
+                <StarRating 
+                  rating={userLog?.userRating || 0} 
+                  interactive={true} 
+                  onChange={handleRatingSelect} 
+                  size="medium"
+                />
+                {userLog?.userRating > 0 && (
+                  <button 
+                    className="clear-rating-btn" 
+                    onClick={() => handleRatingSelect(0)}
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
             </div>
 
-            {isBookLogged && (
-               <div className="panel-action delete-action" onClick={() => deleteBook(user, userLog)}>
-                <span className="material-symbols-outlined">delete</span>
-                <span>Remove Log</span>
-              </div>
-            )}
+            {/* Edit / Add Review button */}
+            <button className="write-review-btn" onClick={() => setShowLogModal(true)}>
+              {isBookLogged ? 'EDIT LOG / REVIEW...' : 'WRITE A REVIEW...'}
+            </button>
+
+            {/* Add to Custom Lists checklist section */}
+            <div className="panel-lists-section">
+              <label>ADD TO LISTS</label>
+              {lists.length > 0 ? (
+                <div className="panel-lists-list">
+                  {lists.map((list) => {
+                    const isInList = list.books?.some(b => b.volumeId === id)
+                    return (
+                      <label key={list.id} className="panel-list-item-label">
+                        <input 
+                          type="checkbox"
+                          checked={isInList || false}
+                          onChange={async (e) => {
+                            if (onAssignToList) {
+                              await onAssignToList(user, list.id, book || { id, volumeId: id }, !isInList)
+                            }
+                          }}
+                        />
+                        <span className="panel-list-name">{list.name}</span>
+                      </label>
+                    )
+                  })}
+                </div>
+              ) : (
+                <span className="no-lists-message">No lists created.</span>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -62,13 +62,11 @@ export default function BookSearchPage({ user, loggedBooks, tbr, addBook, delete
         <h2>SEARCH RESULTS FOR "{urlQuery.toUpperCase()}"</h2>
       </div>
 
-      {loading && (
+      {loading ? (
         <div className="spinner-container">
           <div className="spinner"></div>
         </div>
-      )}
-
-      {error ? (
+      ) : error ? (
         <div className="search-results-error">Error: {error.message}</div>
       ) : (
         <div className="search-results-list">
@@ -112,7 +110,7 @@ export default function BookSearchPage({ user, loggedBooks, tbr, addBook, delete
                 </div>
               )
             })
-          ) : urlQuery && !loading ? (
+          ) : urlQuery ? (
              <div className="no-results">No books found for "{urlQuery}"</div>
           ) : null}
         </div>

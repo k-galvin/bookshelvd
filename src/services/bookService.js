@@ -1,7 +1,7 @@
 // This service completely hides the data store from the rest of the app.
 
 import { db } from '../firebaseConfig'
-import { collection, query, getDocs, addDoc, doc, where, deleteDoc, updateDoc, Timestamp } from 'firebase/firestore'
+import { collection, query, getDocs, getDoc, addDoc, doc, where, deleteDoc, updateDoc, Timestamp, collectionGroup } from 'firebase/firestore'
 
 // Add a read book to the firestore
 export async function logBook(user, book, logDetails = {}) {
@@ -24,8 +24,9 @@ export async function logBook(user, book, logDetails = {}) {
     // User specific data
     userRating: logDetails.rating || 0,
     userReview: logDetails.review || '',
-    dateRead: logDetails.dateRead || Timestamp.now(),
+    dateRead: logDetails.dateRead === null ? null : (logDetails.dateRead || Timestamp.now()),
     isLiked: logDetails.isLiked || false,
+    readCount: logDetails.readCount || 1,
     createdAt: Timestamp.now()
   }
 
@@ -33,14 +34,7 @@ export async function logBook(user, book, logDetails = {}) {
   const loggedBooksCollectionRef = collection(userRef, 'loggedBooks')
 
   try {
-    // Check if book has already been logged
-    const existingBookQuery = query(loggedBooksCollectionRef, where('volumeId', '==', bookData.volumeId))
-    const existingBookSnapshot = await getDocs(existingBookQuery)
 
-    if (!existingBookSnapshot.empty) {
-      // For simplicity, we just return if already logged
-      return
-    }
 
     const loggedBookRef = await addDoc(loggedBooksCollectionRef, bookData)
     return { id: loggedBookRef.id, ...bookData }
@@ -88,8 +82,8 @@ export async function fetchLoggedBooks(userId) {
   }
 }
 
-// Watchlist functions
-export async function addToWatchlist(user, book) {
+// TBR functions
+export async function addToTBR(user, book) {
   const userId = user.uid
   const bookData = {
     title: book.volumeInfo?.title || book.title,
@@ -109,12 +103,12 @@ export async function addToWatchlist(user, book) {
 
     await addDoc(watchlistRef, bookData)
   } catch (error) {
-    console.error('Error adding to watchlist:', error)
+    console.error('Error adding to TBR:', error)
     throw error
   }
 }
 
-export async function removeFromWatchlist(user, volumeId) {
+export async function removeFromTBR(user, volumeId) {
   try {
     const userRef = doc(db, 'users', user.uid)
     const watchlistRef = collection(userRef, 'watchlist')
@@ -123,12 +117,12 @@ export async function removeFromWatchlist(user, volumeId) {
     const deletePromises = snapshot.docs.map(d => deleteDoc(doc(watchlistRef, d.id)))
     await Promise.all(deletePromises)
   } catch (error) {
-    console.error('Error removing from watchlist:', error)
+    console.error('Error removing from TBR:', error)
     throw error
   }
 }
 
-export async function fetchWatchlist(userId) {
+export async function fetchTBR(userId) {
   try {
     const userRef = doc(db, 'users', userId)
     const snapshot = await getDocs(collection(userRef, 'watchlist'))
@@ -137,7 +131,7 @@ export async function fetchWatchlist(userId) {
       ...doc.data()
     }))
   } catch (error) {
-    console.error('Error fetching watchlist:', error)
+    console.error('Error fetching TBR:', error)
     throw error
   }
 }
@@ -204,4 +198,145 @@ export function getSortedBooks(loggedBooks, sortOption) {
   }
 
   return [...loggedBooks].sort(compareFunction)
+}
+
+// --- Favorites Management ---
+export async function fetchFavorites(userId) {
+  try {
+    const userDocRef = doc(db, 'users', userId)
+    const userDocSnap = await getDoc(userDocRef)
+    if (userDocSnap.exists()) {
+      return userDocSnap.data().favorites || []
+    }
+    return []
+  } catch (error) {
+    console.error('Error fetching favorites:', error)
+    throw error
+  }
+}
+
+export async function saveFavorites(userId, favoritesArray) {
+  try {
+    const userDocRef = doc(db, 'users', userId)
+    await updateDoc(userDocRef, { favorites: favoritesArray })
+  } catch (error) {
+    console.error('Error saving favorites:', error)
+    throw error
+  }
+}
+
+// --- Custom Lists Management ---
+export async function createList(user, name, description, books = [], isPublic = true) {
+  try {
+    const userRef = doc(db, 'users', user.uid)
+    const listsCollectionRef = collection(userRef, 'lists')
+    const listDoc = {
+      name,
+      description,
+      books,
+      isPublic,
+      createdAt: Timestamp.now()
+    }
+    const docRef = await addDoc(listsCollectionRef, listDoc)
+    return { id: docRef.id, ...listDoc }
+  } catch (error) {
+    console.error('Error creating list:', error)
+    throw error
+  }
+}
+
+export async function fetchLists(userId) {
+  try {
+    const userRef = doc(db, 'users', userId)
+    const snapshot = await getDocs(collection(userRef, 'lists'))
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+  } catch (error) {
+    console.error('Error fetching lists:', error)
+    throw error
+  }
+}
+
+export async function fetchListById(userId, listId) {
+  try {
+    const userRef = doc(db, 'users', userId)
+    const listDocRef = doc(userRef, 'lists', listId)
+    const snap = await getDoc(listDocRef)
+    if (snap.exists()) {
+      return { id: snap.id, ...snap.data() }
+    }
+    return null
+  } catch (error) {
+    console.error('Error fetching list by id:', error)
+    throw error
+  }
+}
+
+export async function updateList(userId, listId, updates) {
+  try {
+    const userRef = doc(db, 'users', userId)
+    const listDocRef = doc(userRef, 'lists', listId)
+    await updateDoc(listDocRef, updates)
+  } catch (error) {
+    console.error('Error updating list:', error)
+    throw error
+  }
+}
+
+export async function deleteList(userId, listId) {
+  try {
+    const userRef = doc(db, 'users', userId)
+    const listDocRef = doc(userRef, 'lists', listId)
+    await deleteDoc(listDocRef)
+  } catch (error) {
+    console.error('Error deleting list:', error)
+    throw error
+  }
+}
+
+export async function addBookToList(userId, listId, book) {
+  try {
+    const list = await fetchListById(userId, listId)
+    if (!list) return []
+    const currentBooks = list.books || []
+    if (currentBooks.some(b => b.volumeId === book.volumeId)) return currentBooks
+    const updatedBooks = [...currentBooks, book]
+    await updateList(userId, listId, { books: updatedBooks })
+    return updatedBooks
+  } catch (error) {
+    console.error('Error adding book to list:', error)
+    throw error
+  }
+}
+
+export async function removeBookFromList(userId, listId, volumeId) {
+  try {
+    const list = await fetchListById(userId, listId)
+    if (!list) return []
+    const currentBooks = list.books || []
+    const updatedBooks = currentBooks.filter(b => b.volumeId !== volumeId)
+    await updateList(userId, listId, { books: updatedBooks })
+    return updatedBooks
+  } catch (error) {
+    console.error('Error removing book from list:', error)
+    throw error
+  }
+}
+
+export async function fetchAllPublicLists() {
+  try {
+    const snapshot = await getDocs(collectionGroup(db, 'lists'))
+    return snapshot.docs
+      .map(doc => ({
+        id: doc.id,
+        userId: doc.ref.parent.parent?.id,
+        ...doc.data()
+      }))
+      .filter(list => list.isPublic !== false)
+  } catch (error) {
+    console.error('Error fetching all public lists:', error)
+    throw error
+  }
 }

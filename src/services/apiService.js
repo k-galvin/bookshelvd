@@ -19,13 +19,13 @@ const setCachedData = (key, data) => {
 };
 
 // Search through books in the Google Books API to get those that match the query
-const searchBooks = async query => {
+const searchBooks = async (query, maxResults) => {
   if (!query || query.trim() === '') {
     return []
   }
 
   // Check cache first
-  const cacheKey = `search_${encodeURIComponent(query.trim().toLowerCase())}`;
+  const cacheKey = `search_${encodeURIComponent(query.trim().toLowerCase())}${maxResults ? `_limit_${maxResults}` : ''}`;
   const cachedResult = getCachedData(cacheKey);
   if (cachedResult) {
     return cachedResult;
@@ -35,6 +35,9 @@ const searchBooks = async query => {
 
   try {
     const params = new URLSearchParams({ q: query });
+    if (maxResults) {
+      params.append('maxResults', maxResults);
+    }
     if (apiKey && apiKey !== 'undefined') {
       params.append('key', apiKey);
     }
@@ -184,7 +187,7 @@ const fetchOriginalPublicationYear = async (title, author) => {
         const potentialYears = [
           doc.first_publish_year,
           ...(doc.publish_year || [])
-        ].filter(y => y && typeof y === 'number' && y > 1901);
+        ].filter(y => y && typeof y === 'number' && y > 0 && y !== 1900 && y !== 1901);
 
         if (potentialYears.length > 0) {
           const docMin = Math.min(...potentialYears);
