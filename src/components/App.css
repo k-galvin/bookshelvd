@@ -23,6 +23,11 @@
 html {
   overflow-y: scroll;
   scrollbar-gutter: stable;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
 }
 
 body {
@@ -669,6 +674,8 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 5px;
 }
 
@@ -749,6 +756,7 @@ header {
   padding: 20px;
   box-shadow: var(--shadow-medium);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  box-sizing: border-box;
 }
 
 .dashboard-card h4 {
@@ -816,7 +824,7 @@ header {
 
 .tbr-preview-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -895,6 +903,8 @@ header {
   display: flex;
   align-items: center;
   padding-left: 15px;
+  overflow: hidden;
+  max-width: 100%;
 }
 
 .dashboard-list-cover-slot {
@@ -1583,7 +1593,7 @@ header {
 /* Responsive Media Queries */
 @media (max-width: 900px) {
   .dashboard-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 2.5em;
   }
   
@@ -1592,7 +1602,7 @@ header {
   }
 
   .book-detail-content {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     justify-items: center;
     text-align: center;
     gap: 2.5em;
@@ -1669,6 +1679,7 @@ header {
   max-width: 1100px;
   margin: 0 auto;
   padding: 2em 20px;
+  box-sizing: border-box;
 }
 
 .profile-header {
@@ -1808,7 +1819,7 @@ header {
 /* Favorites Shelf */
 .favorites-shelf-display {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 15px;
   padding-bottom: 20px;
   border-bottom: 5px solid #24303c;
@@ -2007,6 +2018,7 @@ header {
 
 .histogram-bar-col {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2041,6 +2053,10 @@ header {
   color: var(--text-muted);
   margin-top: 6px;
   text-align: center;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* TBR Preview */
@@ -2053,7 +2069,7 @@ header {
 
 .tbr-preview-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   margin-top: 1em;
 }
@@ -2114,7 +2130,7 @@ header {
 
 .favs-modal-slots-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 15px;
   margin-bottom: 2em;
 }
@@ -2997,12 +3013,12 @@ header {
 /* Responsive Overrides */
 @media (max-width: 900px) {
   .profile-body-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 2.5em;
   }
   
   .create-list-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 2.5em;
   }
   
@@ -3021,16 +3037,17 @@ header {
   
   .profile-stats-bar {
     width: 100%;
-    justify-content: space-between;
-    gap: 1em;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
   }
   
   .favorites-shelf-display {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   
   .favs-modal-slots-row {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   
   .diary-table th:nth-child(1),
@@ -4080,6 +4097,7 @@ header {
   gap: 15px;
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  box-sizing: border-box;
 }
 
 .profile-sec-left {
@@ -4352,6 +4370,7 @@ header {
 
 .monthly-bar-col {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -4411,13 +4430,18 @@ header {
   color: var(--text-muted);
   margin-top: 8px;
   text-transform: uppercase;
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Grids for charts */
 .dashboard-charts-grid,
 .profile-charts-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
   margin-top: 1.5em;
   margin-bottom: 2em;
@@ -4431,7 +4455,7 @@ header {
 @media (max-width: 768px) {
   .dashboard-charts-grid,
   .profile-charts-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   /* Header mobile resets */
@@ -4617,6 +4641,7 @@ header {
     justify-content: flex-start !important;
     gap: 15px !important;
     padding-bottom: 4px !important;
+    min-width: 0 !important;
   }
 
   .profile-sec-tab-link {
@@ -4636,13 +4661,13 @@ header {
 /* Scaling Down the Four Favorites covers on mobile */
 @media (max-width: 600px) {
   .favorites-shelf-display {
-    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     gap: 8px !important;
   }
 
   /* Force exactly 3 columns across on narrow screens */
   .books-container {
-    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     gap: 12px 8px !important;
   }
 
