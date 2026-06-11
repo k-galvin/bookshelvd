@@ -33,7 +33,7 @@ export default function ProfilePage({ user, loggedBooks = [], tbr = [], favorite
     const timeB = b.dateRead?.toMillis ? b.dateRead.toMillis() : new Date(b.dateRead || b.createdAt).getTime()
     return timeB - timeA
   })
-  const recentLogs = sortedLoggedBooks.slice(0, 3)
+  const recentLogs = sortedLoggedBooks.slice(0, 5)
 
   // Compute ratings histogram data (0.5 to 5.0 in steps of 0.5)
   const ratingSteps = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
@@ -214,15 +214,6 @@ export default function ProfilePage({ user, loggedBooks = [], tbr = [], favorite
               <p className="empty-text">No books logged yet.</p>
             )}
           </div>
-
-          {/* Charts Section */}
-          <div className="profile-section-charts" style={{ marginTop: '2.5em' }}>
-            <h3 className="section-title-underlined">READING ANALYTICS</h3>
-            <div className="profile-charts-grid">
-              <TopAuthorsChart loggedBooks={loggedBooks} />
-              <MonthlyReadingChart loggedBooks={loggedBooks} />
-            </div>
-          </div>
         </div>
 
         {/* Right column: Ratings Histogram & TBR */}
@@ -270,6 +261,15 @@ export default function ProfilePage({ user, loggedBooks = [], tbr = [], favorite
             ) : (
               <p className="empty-text">Your TBR is empty.</p>
             )}
+          </div>
+
+          {/* Reading Analytics */}
+          <div className="profile-sidebar-analytics" style={{ marginTop: '1.5em' }}>
+            <h3 className="section-title-underlined" style={{ marginBottom: '1em' }}>READING ANALYTICS</h3>
+            <div className="profile-sidebar-charts-list">
+              <TopAuthorsChart loggedBooks={loggedBooks} />
+              <MonthlyReadingChart loggedBooks={loggedBooks} />
+            </div>
           </div>
         </aside>
       </div>

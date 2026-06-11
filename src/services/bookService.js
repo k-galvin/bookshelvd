@@ -1,7 +1,7 @@
 // This service completely hides the data store from the rest of the app.
 
 import { db } from '../firebaseConfig'
-import { collection, query, getDocs, getDoc, addDoc, doc, where, deleteDoc, updateDoc, Timestamp, collectionGroup } from 'firebase/firestore'
+import { collection, query, getDocs, getDoc, addDoc, doc, where, deleteDoc, updateDoc, Timestamp, collectionGroup, arrayUnion, arrayRemove, increment } from 'firebase/firestore'
 
 // Add a read book to the firestore
 export async function logBook(user, book, logDetails = {}) {
@@ -261,12 +261,26 @@ export async function fetchLists(userId) {
 
 export async function fetchListById(userId, listId) {
   try {
+    // 1. Try to fetch from the specified user's lists directly
     const userRef = doc(db, 'users', userId)
     const listDocRef = doc(userRef, 'lists', listId)
     const snap = await getDoc(listDocRef)
     if (snap.exists()) {
-      return { id: snap.id, ...snap.data() }
+      return { id: snap.id, userId, ...snap.data() }
     }
+    
+    // 2. Fallback: Search across all lists in the collection group by matching listId
+    const q = query(collectionGroup(db, 'lists'))
+    const snapshot = await getDocs(q)
+    const match = snapshot.docs.find(d => d.id === listId)
+    if (match) {
+      return {
+        id: match.id,
+        userId: match.ref.parent.parent?.id,
+        ...match.data()
+      }
+    }
+    
     return null
   } catch (error) {
     console.error('Error fetching list by id:', error)
@@ -327,16 +341,59 @@ export async function removeBookFromList(userId, listId, volumeId) {
 
 export async function fetchAllPublicLists() {
   try {
-    const snapshot = await getDocs(collectionGroup(db, 'lists'))
-    return snapshot.docs
-      .map(doc => ({
-        id: doc.id,
-        userId: doc.ref.parent.parent?.id,
-        ...doc.data()
-      }))
-      .filter(list => list.isPublic !== false)
+    // Query all lists using collectionGroup without filters to avoid index requirements
+    const q = query(collectionGroup(db, 'lists'))
+    const snapshot = await getDocs(q)
+    const lists = snapshot.docs.map(doc => ({
+      id: doc.id,
+      userId: doc.ref.parent.parent?.id,
+      ...doc.data()
+    }))
+    // Filter client-side (isPublic defaults to true if the field is not present)
+    return lists.filter(list => list.isPublic !== false)
   } catch (error) {
-    console.error('Error fetching all public lists:', error)
+    console.warn('collectionGroup query failed, attempting manual fallback:', error)
+    try {
+      // Fallback: Fetch all users, then fetch their lists manually
+      const usersSnap = await getDocs(collection(db, 'users'))
+      const allLists = []
+      for (const userDoc of usersSnap.docs) {
+        const listsSnap = await getDocs(collection(userDoc.ref, 'lists'))
+        listsSnap.docs.forEach(doc => {
+          const data = doc.data()
+          if (data.isPublic !== false) {
+            allLists.push({
+              id: doc.id,
+              userId: userDoc.id,
+              ...data
+            })
+          }
+        })
+      }
+      return allLists
+    } catch (fallbackError) {
+      console.error('Fallback fetchAllPublicLists failed:', fallbackError)
+      throw error // Throw original collectionGroup error if fallback also fails
+    }
+  }
+}
+
+export async function toggleLikeList(ownerId, listId, userId, isLiked) {
+  try {
+    const listRef = doc(db, 'users', ownerId, 'lists', listId)
+    if (isLiked) {
+      await updateDoc(listRef, {
+        likes: arrayRemove(userId),
+        likesCount: increment(-1)
+      })
+    } else {
+      await updateDoc(listRef, {
+        likes: arrayUnion(userId),
+        likesCount: increment(1)
+      })
+    }
+  } catch (error) {
+    console.error('Error toggling list like:', error)
     throw error
   }
 }

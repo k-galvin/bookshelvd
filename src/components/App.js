@@ -222,6 +222,10 @@ function App() {
     }
   }
 
+  const handleUpdateList = (listId, updates) => {
+    setLists(prev => prev.map(l => l.id === listId ? { ...l, ...updates } : l))
+  }
+
   const handleUpdateFavorites = async (newFavorites) => {
     try {
       await saveFavorites(user.uid, newFavorites)
@@ -453,6 +457,7 @@ function App() {
                   onAssignToList={handleAssignToList}
                   onMarkAsRead={handleMarkAsRead}
                   onUpdateBookRating={handleUpdateBookRating}
+                  onUpdateList={handleUpdateList}
                 />
               }
             />

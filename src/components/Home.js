@@ -4,7 +4,7 @@ import StarRating from './StarRating'
 import TopAuthorsChart from './TopAuthorsChart'
 import MonthlyReadingChart from './MonthlyReadingChart'
 
-export default function Home({ user, addBook, deleteBook, updateBook, loggedBooks = [], tbr = [], addToTBR }) {
+export default function Home({ user, addBook, deleteBook, updateBook, loggedBooks = [], tbr = [], addToTBR, lists = [] }) {
   // Display login page if not signed in
   if (!user) {
     return <LoginPage />
@@ -131,6 +131,38 @@ export default function Home({ user, addBook, deleteBook, updateBook, loggedBook
             <div className="empty-tbr-box">
               <p>Your TBR is empty.</p>
               <Link to="/books" className="text-link">Browse books</Link>
+            </div>
+          )}
+        </div>
+
+        {/* Custom Lists Preview Card */}
+        <div className="dashboard-card lists-preview-card">
+          <div className="card-header-row">
+            <h4>YOUR LISTS</h4>
+            <Link to="/my-lists" className="view-all-link">ALL</Link>
+          </div>
+          {lists.length > 0 ? (
+            <div className="dashboard-lists-list">
+              {lists.slice(0, 3).map(list => (
+                <Link key={list.id} to={`/list/${list.id}`} className="dashboard-list-item">
+                  <div className="dashboard-list-item-info">
+                    <span className="dashboard-list-item-name">{list.name}</span>
+                    <span className="dashboard-list-item-count">{list.books?.length || 0} books</span>
+                  </div>
+                  <div className="dashboard-list-item-covers">
+                    {(list.books || []).slice(0, 12).map((book, index) => (
+                      <div key={book.volumeId + index} className="dashboard-list-cover-slot" style={{ zIndex: 20 - index }}>
+                        <img src={book.thumbnail || '/placeholder-cover.png'} alt={book.title} />
+                      </div>
+                    ))}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-tbr-box">
+              <p>No lists created yet.</p>
+              <Link to="/lists/new" className="text-link">Create your first list</Link>
             </div>
           )}
         </div>

@@ -215,7 +215,7 @@ header {
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
-  padding: 2.5em 20px;
+  padding: 2.5em 20px 1.5em 20px;
   flex-grow: 1;
 }
 
@@ -355,6 +355,8 @@ header {
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
+  width: 100%;
+  text-align: center;
 }
 
 .no-cover-author {
@@ -366,6 +368,8 @@ header {
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
+  width: 100%;
+  text-align: center;
 }
 
 .large-book-container .no-cover-title,
@@ -836,6 +840,87 @@ header {
   object-fit: cover;
 }
 
+/* Dashboard lists preview card */
+.dashboard-lists-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dashboard-list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  text-decoration: none;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 12px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.dashboard-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-list-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  width: 100%;
+}
+
+.dashboard-list-item-name {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dashboard-list-item-count {
+  font-size: 0.7rem;
+  color: var(--lb-green);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.dashboard-list-item-covers {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+}
+
+.dashboard-list-cover-slot {
+  width: 30px;
+  height: 45px;
+  margin-left: -15px;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.5);
+  position: relative;
+  background-color: var(--panel-bg-hover);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-list-cover-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-sidebar-charts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .empty-tbr-box {
   text-align: center;
   padding: 15px;
@@ -909,6 +994,14 @@ header {
   width: 100%;
   aspect-ratio: 2 / 3;
   object-fit: cover;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: var(--shadow-large);
+}
+
+.no-cover.large {
+  width: 100%;
+  aspect-ratio: 2 / 3;
   border-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: var(--shadow-large);
@@ -1426,12 +1519,9 @@ header {
   flex-shrink: 0;
 }
 
-.result-cover-interactive .cover-container {
-  width: 70px !important;
-  height: 105px !important;
-}
-
-.result-cover-interactive .cover-img {
+.result-cover-interactive .cover-container,
+.result-cover-interactive .cover-img,
+.result-cover-interactive .no-cover {
   width: 70px !important;
   height: 105px !important;
 }
@@ -1638,12 +1728,42 @@ header {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 3.5em;
+  align-items: stretch;
 }
 
 .profile-left-main {
   display: flex;
   flex-direction: column;
-  gap: 2.5em;
+  gap: 2em;
+  height: 100%;
+}
+
+.profile-right-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.profile-section-activity {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.profile-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  flex-grow: 1;
+}
+
+.profile-sidebar-analytics {
+  margin-top: auto;
+  padding-top: 1.5em;
+}
+
+.profile-sidebar-charts-list .stats-chart-card:last-child {
+  margin-bottom: 0;
 }
 
 .section-header-row {
@@ -1693,7 +1813,7 @@ header {
   padding-bottom: 20px;
   border-bottom: 5px solid #24303c;
   box-shadow: 0 4px 6px -4px rgba(0, 0, 0, 0.5);
-  margin-bottom: 2em;
+  margin-bottom: 0.5em;
 }
 
 .favorite-shelf-slot {
@@ -3927,11 +4047,15 @@ header {
 
   .book-log-page .books-container .small-book-container,
   .book-log-page .books-container .cover-container,
-  .book-log-page .books-container .cover-img,
-  .book-log-page .books-container .no-cover {
+  .book-log-page .books-container .cover-img {
     width: 100% !important;
     height: auto !important;
     aspect-ratio: 2 / 3 !important;
+  }
+
+  .book-log-page .books-container .no-cover {
+    width: 100% !important;
+    height: 100% !important;
   }
 
   /* Reposition popovers near the right edge of a 12-column grid */
@@ -4039,14 +4163,20 @@ header {
 .diary-page-container,
 .lists-page-container,
 .discover-page-container,
-.list-detail-page-container,
 .create-list-page,
-.search-page-new,
-.book-log-page,
-.author-page-container,
 .home-page {
   max-width: none !important;
-  padding: 0 0 150px 0 !important;
+  padding: 0 0 40px 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+.list-detail-page-container,
+.search-page-new,
+.book-log-page,
+.author-page-container {
+  max-width: none !important;
+  padding: 0 0 180px 0 !important;
   margin: 0 !important;
   width: 100% !important;
 }
@@ -4509,6 +4639,146 @@ header {
     grid-template-columns: repeat(4, 1fr) !important;
     gap: 8px !important;
   }
+
+  /* Force exactly 3 columns across on narrow screens */
+  .books-container {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px 8px !important;
+  }
+
+  /* Allow cards to scale dynamically within the grid columns */
+  .books-container .small-book-container,
+  .books-container .cover-container,
+  .books-container .cover-img {
+    width: 100% !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    aspect-ratio: 2 / 3 !important;
+  }
+
+  .books-container .no-cover {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+}
+
+/* List Title Editing Layout */
+.list-title-display-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.edit-list-title-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.edit-list-title-btn:hover {
+  color: var(--text-white);
+  background-color: var(--panel-bg-hover);
+}
+
+.edit-list-title-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.edit-list-title-input {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-white);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  width: 100%;
+  max-width: 400px;
+}
+
+.edit-list-subtitle-input {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-light);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  width: 100%;
+  max-width: 400px;
+}
+
+.edit-list-subtitle-input:focus,
+.edit-list-title-input:focus {
+  outline: none;
+  border-color: var(--lb-green);
+}
+
+.edit-list-title-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* List Like Button styling */
+.list-like-btn {
+  background: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.list-like-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-white);
+}
+
+.list-like-btn .heart-icon {
+  font-size: 1.1rem !important;
+  font-variation-settings: 'FILL' 0;
+  transition: transform 0.2s ease;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.list-like-btn.liked {
+  color: #ff3a5c !important;
+}
+
+.list-like-btn.liked .heart-icon {
+  font-variation-settings: 'FILL' 1;
+}
+
+.list-like-btn:active .heart-icon {
+  transform: scale(1.3);
+}
+
+.list-card-metadata-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 

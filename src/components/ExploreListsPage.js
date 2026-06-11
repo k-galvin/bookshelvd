@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { fetchLists, fetchAllPublicLists, deleteList } from '../services/bookService'
+import { fetchLists, fetchAllPublicLists, deleteList, toggleLikeList } from '../services/bookService'
 import LoginPage from './LoginPage'
 
 export default function ExploreListsPage({ user }) {
@@ -25,25 +25,29 @@ export default function ExploreListsPage({ user }) {
   useEffect(() => {
     const loadAllListsData = async () => {
       if (!user) return
+      setLoading(true)
+      
       try {
-        setLoading(true)
-        const [myListsData, publicListsData] = await Promise.all([
-          fetchLists(user.uid),
-          fetchAllPublicLists()
-        ])
-
+        const myListsData = await fetchLists(user.uid)
         setMyLists(myListsData)
-        
-        // Sort public lists by book count desc (popularity indicator)
+      } catch (err) {
+        console.error('Error fetching my lists:', err)
+      }
+
+      try {
+        const publicListsData = await fetchAllPublicLists()
         const sortedPublic = [...publicListsData].sort((a, b) => {
+          const likesA = a.likesCount || a.likes?.length || 0
+          const likesB = b.likesCount || b.likes?.length || 0
+          if (likesB !== likesA) return likesB - likesA
           return (b.books?.length || 0) - (a.books?.length || 0)
         })
         setPublicLists(sortedPublic)
       } catch (err) {
-        console.error('Error fetching lists data:', err)
-      } finally {
-        setLoading(false)
+        console.error('Error fetching public lists:', err)
       }
+
+      setLoading(false)
     }
     loadAllListsData()
   }, [user])
@@ -58,6 +62,39 @@ export default function ExploreListsPage({ user }) {
       setPublicLists(prev => prev.filter(l => l.id !== listId))
     } catch (err) {
       console.error('Error deleting list:', err)
+    }
+  }
+
+  const handleLikeToggle = async (e, list) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!user) return
+
+    const ownerId = list.userId || user.uid
+    const likesList = list.likes || []
+    const hasLiked = likesList.includes(user.uid)
+
+    try {
+      await toggleLikeList(ownerId, list.id, user.uid, hasLiked)
+
+      const updateListState = l => {
+        if (l.id === list.id) {
+          const updatedLikes = hasLiked
+            ? likesList.filter(uid => uid !== user.uid)
+            : [...likesList, user.uid]
+          return {
+            ...l,
+            likes: updatedLikes,
+            likesCount: updatedLikes.length
+          }
+        }
+        return l
+      }
+
+      setPublicLists(prev => prev.map(updateListState))
+      setMyLists(prev => prev.map(updateListState))
+    } catch (err) {
+      console.error('Error toggling list like:', err)
     }
   }
 
@@ -111,6 +148,14 @@ export default function ExploreListsPage({ user }) {
                     {list.description && <p className="list-card-desc">{list.description}</p>}
                     <div className="list-card-metadata-row">
                       <span className="list-card-meta">{list.books?.length || 0} book(s)</span>
+                      <button 
+                        className={`list-like-btn ${list.likes?.includes(user.uid) ? 'liked' : ''}`}
+                        onClick={(e) => handleLikeToggle(e, list)}
+                        title={list.likes?.includes(user.uid) ? 'Unlike List' : 'Like List'}
+                      >
+                        <span className="material-symbols-outlined heart-icon">favorite</span>
+                        <span className="likes-count">{list.likesCount || list.likes?.length || 0}</span>
+                      </button>
                       {!isOwner && list.name && (
                         <span className="list-card-author-badge">Public List</span>
                       )}
